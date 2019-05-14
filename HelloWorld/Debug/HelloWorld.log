@@ -1,0 +1,4 @@
+﻿  ObjectMng.cpp
+c:\users\liming\documents\visual studio 2015\projects\helloworld\helloworld\asedata.h(348): warning C4018: '<': signed/unsigned mismatch
+  HelloWorld.vcxproj -> C:\Users\LiMing\Documents\Visual Studio 2015\Projects\HelloWorld\Debug\HelloWorld.exe
+  HelloWorld.vcxproj -> C:\Users\LiMing\Documents\Visual Studio 2015\Projects\HelloWorld\Debug\HelloWorld.pdb (Full PDB)

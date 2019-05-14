@@ -1,0 +1,241 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="File">
+      <UniqueIdentifier>{bb4f1c36-77ff-4b53-a65b-6d04c12c4079}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameSystem">
+      <UniqueIdentifier>{5300c169-f60a-4e10-8d17-55b27c76197c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Global">
+      <UniqueIdentifier>{ef5449a4-ac99-406b-8dd5-ca53d7bc711d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="stdafx">
+      <UniqueIdentifier>{8e5870f0-7702-44ba-9797-dc755810c336}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameMng">
+      <UniqueIdentifier>{a4e8b421-4535-48b2-b06d-e7d514265726}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Graphics">
+      <UniqueIdentifier>{535dda43-a9db-4d50-9839-e70249a6bb5d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="File\Lexer">
+      <UniqueIdentifier>{2b9d31cb-64cb-4f95-b1a0-8919da730607}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="File\TokenDefine">
+      <UniqueIdentifier>{a9bf3ef8-54ec-4b68-94e5-3d3d6a79589c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="File\ConvertData">
+      <UniqueIdentifier>{57c35404-0155-43f7-a776-ae00817bb86e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="File\DropFile">
+      <UniqueIdentifier>{48541955-c703-46b0-b4fb-cb25da330cbd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="File\ASE3DData">
+      <UniqueIdentifier>{1e0f6f8d-d8ab-4770-9877-8547ba41f23f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Object">
+      <UniqueIdentifier>{49e35a1a-5009-41b9-9daf-c1152c70cdb8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Object\Component">
+      <UniqueIdentifier>{5b2b9bcc-9c21-4b44-a0af-abbb90d8bf19}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="MyData">
+      <UniqueIdentifier>{e68f64e8-66b9-4af3-885f-bec4da35f5f8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Graphics\d3d">
+      <UniqueIdentifier>{6026af34-4e41-4bcd-8c79-c44375fa2db0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Graphics\Light">
+      <UniqueIdentifier>{873d1514-0cde-4583-8dab-afa35d253723}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Default">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Object\vertex">
+      <UniqueIdentifier>{46d8cc26-dbd4-4b19-ac88-d32b79199d6a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="MyData\template">
+      <UniqueIdentifier>{921e232a-62eb-4be5-af51-3ddad32178fa}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="MyData\struct">
+      <UniqueIdentifier>{7b348421-9568-4259-a835-00942d770c68}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="MyData\DS">
+      <UniqueIdentifier>{13c19780-1852-4ab3-bbad-d0ff0c9a403a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Main">
+      <UniqueIdentifier>{831446b1-6db9-4984-8370-32bdf7051970}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="ReadMe.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="targetver.h">
+      <Filter>Default</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource.h">
+      <Filter>Default</Filter>
+    </ClInclude>
+    <ClInclude Include="System.h">
+      <Filter>GameSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="FileMng.h">
+      <Filter>File</Filter>
+    </ClInclude>
+    <ClInclude Include="CGDefinitions.h">
+      <Filter>Default</Filter>
+    </ClInclude>
+    <ClInclude Include="Global.h">
+      <Filter>Global</Filter>
+    </ClInclude>
+    <ClInclude Include="stdafx.h">
+      <Filter>stdafx</Filter>
+    </ClInclude>
+    <ClInclude Include="GameMng.h">
+      <Filter>GameMng</Filter>
+    </ClInclude>
+    <ClInclude Include="GraphicsMng.h">
+      <Filter>Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="ObjectMng.h">
+      <Filter>GameMng</Filter>
+    </ClInclude>
+    <ClInclude Include="MyLexer.h">
+      <Filter>File\Lexer</Filter>
+    </ClInclude>
+    <ClInclude Include="TokenDefine.h">
+      <Filter>File\TokenDefine</Filter>
+    </ClInclude>
+    <ClInclude Include="Convert.h">
+      <Filter>File\ConvertData</Filter>
+    </ClInclude>
+    <ClInclude Include="DropFile.h">
+      <Filter>File\DropFile</Filter>
+    </ClInclude>
+    <ClInclude Include="Asedata.h">
+      <Filter>File\ASE3DData</Filter>
+    </ClInclude>
+    <ClInclude Include="ObjCom.h">
+      <Filter>Object\Component</Filter>
+    </ClInclude>
+    <ClInclude Include="D3DClass.h">
+      <Filter>Graphics\d3d</Filter>
+    </ClInclude>
+    <ClInclude Include="LightMng.h">
+      <Filter>Graphics\Light</Filter>
+    </ClInclude>
+    <ClInclude Include="Position.h">
+      <Filter>Object</Filter>
+    </ClInclude>
+    <ClInclude Include="Vertex.h">
+      <Filter>Object\vertex</Filter>
+    </ClInclude>
+    <ClInclude Include="mytemp.h">
+      <Filter>MyData\template</Filter>
+    </ClInclude>
+    <ClInclude Include="mystruct.h">
+      <Filter>MyData\struct</Filter>
+    </ClInclude>
+    <ClInclude Include="myds.h">
+      <Filter>MyData\DS</Filter>
+    </ClInclude>
+    <ClInclude Include="HelloWorld.h">
+      <Filter>Main</Filter>
+    </ClInclude>
+    <ClInclude Include="Object.h">
+      <Filter>Object</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Global.cpp">
+      <Filter>Global</Filter>
+    </ClCompile>
+    <ClCompile Include="System.cpp">
+      <Filter>GameSystem</Filter>
+    </ClCompile>
+    <ClCompile Include="stdafx.cpp">
+      <Filter>stdafx</Filter>
+    </ClCompile>
+    <ClCompile Include="GameMng.cpp">
+      <Filter>GameMng</Filter>
+    </ClCompile>
+    <ClCompile Include="GraphicsMng.cpp">
+      <Filter>Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="ObjectMng.cpp">
+      <Filter>GameMng</Filter>
+    </ClCompile>
+    <ClCompile Include="TimeMng.cpp">
+      <Filter>GameMng</Filter>
+    </ClCompile>
+    <ClCompile Include="Mylexer.cpp">
+      <Filter>File\Lexer</Filter>
+    </ClCompile>
+    <ClCompile Include="TokenDefine.cpp">
+      <Filter>File\TokenDefine</Filter>
+    </ClCompile>
+    <ClCompile Include="Convert.cpp">
+      <Filter>File\ConvertData</Filter>
+    </ClCompile>
+    <ClCompile Include="DropFile.cpp">
+      <Filter>File\DropFile</Filter>
+    </ClCompile>
+    <ClCompile Include="Asedata.cpp">
+      <Filter>File\ASE3DData</Filter>
+    </ClCompile>
+    <ClCompile Include="ObjCom.cpp">
+      <Filter>Object\Component</Filter>
+    </ClCompile>
+    <ClCompile Include="D3DClass.cpp">
+      <Filter>Graphics\d3d</Filter>
+    </ClCompile>
+    <ClCompile Include="LightMng.cpp">
+      <Filter>Graphics\Light</Filter>
+    </ClCompile>
+    <ClCompile Include="Vertex.cpp">
+      <Filter>Object\vertex</Filter>
+    </ClCompile>
+    <ClCompile Include="mystruct.cpp">
+      <Filter>MyData\struct</Filter>
+    </ClCompile>
+    <ClCompile Include="HelloWorld.cpp">
+      <Filter>Main</Filter>
+    </ClCompile>
+    <ClCompile Include="Object.cpp">
+      <Filter>Object</Filter>
+    </ClCompile>
+    <ClCompile Include="ASEMesh.cpp">
+      <Filter>File\ASE3DData</Filter>
+    </ClCompile>
+    <ClCompile Include="ASEObj.cpp">
+      <Filter>File\ASE3DData</Filter>
+    </ClCompile>
+    <ClCompile Include="myds.cpp">
+      <Filter>MyData\DS</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="HelloWorld.rc">
+      <Filter>Resource Files</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="small.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="HelloWorld.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+  </ItemGroup>
+</Project>
