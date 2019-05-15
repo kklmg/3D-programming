@@ -1,7 +1,7 @@
 #include"stdafx.h"
 #include"TokenDefine.h"
 #include"Vertex.h"
-
+#include<unordered_set>
 #include"Asedata.h"
 
 
@@ -57,20 +57,26 @@ bool STMaterial::parse(CMYLexer *lexer)
 	//move to block start
 	lexer->MovetoBlockStart();
 
-	while (lexer->FindToken_Multi_Until(15, TOKEND_BLOCK_END,
-		TOKENR_MATERIAL_NAME,
-		TOKENR_MATERIAL_CLASS,
-		TOKENR_MATERIAL_AMBIENT,
-		TOKENR_MATERIAL_DIFFUSE, 
-		TOKENR_MATERIAL_SPECULAR,
-		TOKENR_MATERIAL_SHINE, 
-		TOKENR_MATERIAL_SHINESTRENGTH,
-		TOKENR_MATERIAL_TRANSPARENCY,
-		TOKENR_MATERIAL_SELFILLUM,
-		TOKENR_MAP_DIFFUSE, TOKENR_MAP_REFLECT,TOKENR_MAP_SPECULAR,
-		TOKENR_NUMSUBMTLS,
-		TOKENR_SUBMATERIAL, 
-		TOKEND_BLOCK_START))
+	std::unordered_set<DWORD> Memo;
+	Memo.insert(TOKENR_MATERIAL_NAME);
+	Memo.insert(TOKENR_MATERIAL_CLASS);
+	Memo.insert(TOKENR_MATERIAL_AMBIENT);
+	Memo.insert(TOKENR_MATERIAL_DIFFUSE);
+	Memo.insert(TOKENR_MATERIAL_SPECULAR);
+	Memo.insert(TOKENR_MATERIAL_SHINE);
+	Memo.insert(TOKENR_MATERIAL_SHINESTRENGTH);
+	Memo.insert(TOKENR_MATERIAL_TRANSPARENCY);
+	Memo.insert(TOKENR_MATERIAL_SELFILLUM);
+	Memo.insert(TOKENR_MAP_DIFFUSE);
+	Memo.insert(TOKENR_MAP_REFLECT);
+	Memo.insert(TOKENR_MAP_SPECULAR);
+	Memo.insert(TOKENR_NUMSUBMTLS);
+	Memo.insert(TOKENR_SUBMATERIAL);
+	Memo.insert(TOKEND_BLOCK_START);
+
+
+
+	while (lexer->FindToken_UseTable_Until(TOKEND_BLOCK_END,Memo))
 	{
 		switch (CMYLexer::s_CurToken_Dw)
 		{
@@ -174,7 +180,8 @@ bool STMaterial::parse(CMYLexer *lexer)
 
 		//skip undefined token
 		case TOKEND_BLOCK_START:
-			lexer->SkipCurBlock(); break;
+			lexer->SkipCurBlock(); 
+			break;
 		}
 	}
 	return TRUE;
@@ -265,15 +272,17 @@ bool STScene::parse(CMYLexer *lexer)
 {
 	lexer->MovetoBlockStart();
 
-	while (lexer->FindToken_Multi_Until(
-		7, TOKEND_BLOCK_END,
-		TOKENR_SCENE_FIRSTFRAME,
-		TOKENR_SCENE_LASTFRAME,
-		TOKENR_SCENE_FRAMESPEED,
-		TOKENR_SCENE_TICKSPERFRAME,
-		TOKENR_SCENE_BACKGROUND_STATIC,
-		TOKENR_SCENE_AMBIENT_STATIC,
-		TOKEND_BLOCK_START))
+	std::unordered_set<DWORD> Memo;
+	Memo.insert(TOKENR_SCENE_FIRSTFRAME);
+	Memo.insert(TOKENR_SCENE_LASTFRAME);
+	Memo.insert(TOKENR_SCENE_FRAMESPEED);
+	Memo.insert(TOKENR_SCENE_TICKSPERFRAME);
+	Memo.insert(TOKENR_SCENE_BACKGROUND_STATIC);
+	Memo.insert(TOKENR_SCENE_AMBIENT_STATIC);
+	Memo.insert(TOKEND_BLOCK_START);
+
+
+	while (lexer->FindToken_UseTable_Until(TOKEND_BLOCK_END,Memo))
 	{
 		switch (CMYLexer::s_CurToken_Dw)
 		{
@@ -304,7 +313,8 @@ bool STScene::parse(CMYLexer *lexer)
 		} break;
 
 		case TOKEND_BLOCK_START:
-			lexer->SkipCurBlock(); break;
+			//lexer->SkipCurBlock(); 
+			break;
 		}
 	}
 	return true;
@@ -378,17 +388,18 @@ bool CASEData::ParsingAll(LPCSTR FileName)
 	m_plexer = new CMYLexer(&TokenDefine);
 	if (!m_plexer->Open(FileName))return false;
 	
-	//find 1.SceneData 2.material list 3.gemoobject 4.
-	while (m_plexer->FindToken_Multi_Until
-	(
-		7, TOKEND_END, 
-		TOKENR_SCENE,
-		TOKENR_MATERIAL_LIST,
-		TOKENR_GEOMOBJECT,
-		TOKENR_HELPEROBJECT, 
-		TOKENR_SHAPEOBJECT,
-		TOKENR_LIGHTOBJECT, 
-		TOKENR_CAMERAOBJECT))
+
+	std::unordered_set<DWORD> Memo;
+
+	Memo.insert(TOKENR_SCENE);
+	Memo.insert(TOKENR_MATERIAL_LIST);
+	Memo.insert(TOKENR_GEOMOBJECT);
+	Memo.insert(TOKENR_HELPEROBJECT);
+	Memo.insert(TOKENR_SHAPEOBJECT);
+	Memo.insert(TOKENR_LIGHTOBJECT);
+	Memo.insert(TOKENR_CAMERAOBJECT);
+
+	while (m_plexer->FindToken_UseTable(Memo))
 	{
 		switch (CMYLexer::s_CurToken_Dw)
 		{
@@ -405,12 +416,6 @@ bool CASEData::ParsingAll(LPCSTR FileName)
 
 
 
-	//while (m_plexer->FindToken_Until(TOKENR_GEOMOBJECT, TOKEND_END))
-	//{
-	//	ParseGemoObject();
-	//}
-
-
 	return true;
 }
 
@@ -421,9 +426,19 @@ void CASEData::ParseGemoObject()
 {
 	STGEOMObject*GeoObj = new STGEOMObject;
 
-	m_plexer->FindToken(TOKEND_BLOCK_START);
-	while (m_plexer->FindToken_Multi_Until(7, TOKEND_BLOCK_END,
-		TOKENR_NODE_NAME, TOKENR_NODE_PARENT, TOKENR_MATERIAL_REF, TOKENR_NODE_TM, TOKENR_TM_ANIMATION, TOKENR_MESH, TOKEND_BLOCK_START))
+	std::unordered_set<DWORD> Memo;
+	Memo.insert(TOKENR_NODE_NAME);
+	Memo.insert(TOKENR_NODE_PARENT);
+	Memo.insert(TOKENR_MATERIAL_REF);
+	Memo.insert(TOKENR_NODE_TM);
+	Memo.insert(TOKENR_TM_ANIMATION);
+	Memo.insert(TOKENR_MESH);
+	Memo.insert(TOKEND_BLOCK_START);
+
+
+	m_plexer->MovetoBlockStart();
+
+	while (m_plexer->FindToken_UseTable_Until(TOKEND_BLOCK_END,Memo))
 	{
 		switch (CMYLexer::s_CurToken_Dw)
 		{

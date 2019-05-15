@@ -1,24 +1,59 @@
 #include"stdafx.h"
 #include"TokenDefine.h"
 
+
+unsigned short InitIDTable(char* table) 
+{
+	int curID = 0;
+
+	for (int i = 'A'; i <= 'Z'; ++i, ++curID) 
+	{
+		table[i] = curID;
+	}
+	for (int i = '0'; i <= '9'; ++i, ++curID) 
+	{
+		table[i] = curID;
+	}
+
+	table['*'] = curID; curID++;
+
+	table['_'] = curID; curID++;
+
+	return curID;
+}
+
 //-------------------------------------------
 //Class Token
 //-------------------------------------------
-bool CTokenDefine::SearchData(LPSTR SearchStr, int &GetValue)
-{
-	m_iter = m_mapTokenDefine.find(SearchStr);
+CTokenDefine::CTokenDefine() :m_pTrie(nullptr)
+{}
 
-	if (m_iter == m_mapTokenDefine.end())return FALSE;
-	else
-	{
-		GetValue = (*m_iter).second;
-		return TRUE;
-	}
+CTokenDefine::~CTokenDefine() 
+{
+	SAFE_DELETE(m_pTrie);
 }
 
-void CTokenDefine::DefineToken(LPCSTR str, int en)
+void CTokenDefine::InitTrie(WORD slotct,unsigned short(*IDCreator)(char*)) 
 {
-	m_mapTokenDefine.insert(std::pair<std::string, int>(str, en));
+	if (m_pTrie)SAFE_DELETE(m_pTrie);
+	m_pTrie = new STrie::Trie_Table<int>(InitIDTable);
+}
+
+
+bool CTokenDefine::SearchData(LPSTR SearchStr, int &GetValue)
+{
+	if (!m_pTrie) return false;
+
+	return m_pTrie->Search(SearchStr, GetValue);
+		
+	return true;
+}
+
+void CTokenDefine::DefineToken(LPCSTR str, WORD en)
+{
+	if (!m_pTrie) return;
+
+	m_pTrie->Insert(str,en);
 }
 
 
@@ -36,6 +71,8 @@ void CToken_Scene::Init()
 CToken_TileMap::CToken_TileMap() { Init(); }
 void CToken_TileMap::Init()
 {
+	InitTrie(MYSLOT, InitIDTable);
+
 	DefineToken("*MAPNAME", temTM_MapName);
 	DefineToken("*MAPROW", temTM_Row);
 	DefineToken("*MAPCOLUMN", temTM_Column);
@@ -53,6 +90,8 @@ void CToken_TileMap::Init()
 CToken_TileSheet::CToken_TileSheet() { Init(); }
 void CToken_TileSheet::Init()
 {
+	InitTrie(MYSLOT, InitIDTable);
+
 	DefineToken("*TILESHEETDATA", temTS_Data);
 	DefineToken("*TILESHEET", temTS_Name);
 	DefineToken("*FILEPATHGROUP", temTS_PathGroup);
@@ -67,6 +106,8 @@ void CToken_TileSheet::Init()
 CToken_Tile::CToken_Tile() { Init(); }
 void CToken_Tile::Init()
 {
+	InitTrie(MYSLOT, InitIDTable);
+
 	DefineToken("*TILEDATA", emToken_Tile::temT_TileData);
 	DefineToken("*TILENAME", emToken_Tile::temT_TileName);
 	DefineToken("*REFTILESHEET", emToken_Tile::temT_REFSheet);
@@ -82,6 +123,8 @@ void CToken_Tile::Init()
 CToken_ASE3D::CToken_ASE3D() { Init(); }
 void CToken_ASE3D::Init()
 {
+	InitTrie(MYSLOT, InitIDTable);
+
 	char* Token[256] = {
 		"*3DSMAX_ASCIIEXPORT"		/*  0*/
 		,  "*COMMENT"					/*  1*/

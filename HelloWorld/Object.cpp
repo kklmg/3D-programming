@@ -2,7 +2,7 @@
 #include"ObjCom.h"
 #include"Asedata.h"
 #include"Object.h"
-
+#include<time.h>
 
 
 CObject::CObject()
@@ -31,6 +31,7 @@ bool CObject::Init(std::string str)
 	if (postfix == "ase" || postfix == "ASE")
 	{
 		ASEData::CASEData data;
+
 		data.ParsingAll(str.data());
 
 		Init(data);

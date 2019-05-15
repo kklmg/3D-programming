@@ -1,5 +1,6 @@
 #pragma once
 #include<map>
+#include"Trie.h"
 
 // 1) Definitions
 #define	MAX_SIZE_OF_BUFFER		65536	// 읽기용 Buffer의 크기(한꺼번에 읽어들이는 최대 크기.)
@@ -14,6 +15,15 @@
 #define	TOKEND_IDENTIFIER		65535	// 변수를 의미한다.(여기서는 사용하지 않는다.)
 #define	TOKEND_NOTDEFINED		65536	// 정의되지 않은 것을 의미한다. (쉽게 말해 Error)
 
+//slot: A ~ Z    26; 
+//slot: 0 ~ 9    10;
+//slot: '*' '_'   2;
+//gross          38
+const int MYSLOT = 38;
+
+unsigned short InitIDTable(char* table);
+
+
 
 //-------------------------------------------
 //Class Token
@@ -21,16 +31,21 @@
 class CTokenDefine
 {
 public:
+	CTokenDefine();
+	virtual ~CTokenDefine();
+
 	bool SearchData(LPSTR SearchStr, int &GetValue);
 
 protected:
 	virtual void Init() = 0;
 
-	void DefineToken(LPCSTR str, int en);
+	void DefineToken(LPCSTR str, WORD en);
+
+	void InitTrie(WORD slot, unsigned short(*IDCreator)(char*));
 
 private:
-	std::map<std::string, int> m_mapTokenDefine;
-	std::map<std::string, int>::iterator m_iter;
+
+	STrie::Trie_Table<int> *m_pTrie;
 };
 
 

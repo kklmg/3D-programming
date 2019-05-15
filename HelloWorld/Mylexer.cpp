@@ -1,7 +1,7 @@
 #include"stdafx.h"
 #include"MyLexer.h"
 #include"Convert.h"
-
+#include<unordered_set>
 
 std::string CMYLexer::s_CurToken_Str;
 DWORD CMYLexer::s_CurToken_Dw;
@@ -29,7 +29,6 @@ bool CMYLexer::GetNextChar()
 {
 	if (m_File.peek() == EOF) return FALSE;
 
-	m_File.seekg(0, std::ios::cur);
 	m_File.read(&m_CurChar, 1);
 	return TRUE;
 }
@@ -40,9 +39,6 @@ BOOL CMYLexer::Open(LPCSTR p_strFileName)
 	m_File.open(p_strFileName);
 
 	if (!m_File.is_open())return FALSE;
-
-	//Init seek position
-	//m_File.seekg(std::ios::beg);
 }
 
 void CMYLexer::Close()
@@ -61,7 +57,6 @@ BOOL CMYLexer::Reset()
 
 DWORD CMYLexer::GetNextToken(std::string& GetString)
 {
-	GetString.clear();
 	//get next Char
 	if (!GetNextChar())	return s_CurToken_Dw = TOKEND_END;
 
@@ -193,7 +188,7 @@ void CMYLexer::SkipCurBlock()
 	int blk_S = 1;
 	int blk_E = 0;
 
-	while (FindToken_Multi(2,TOKEND_BLOCK_START, TOKEND_BLOCK_END))
+	while (FindToken(TOKEND_BLOCK_START, TOKEND_BLOCK_END))
 	{
 		switch (s_CurToken_Dw)
 		{
@@ -204,8 +199,6 @@ void CMYLexer::SkipCurBlock()
 		}
 		if (blk_S == blk_E) return;
 	}
-
-
 }
 
 
@@ -218,46 +211,14 @@ bool CMYLexer::FindToken(int FindToken)
 	} while (s_CurToken_Dw != TOKEND_END);
 	return FALSE;
 }
-bool CMYLexer::FindToken_Multi(int num,...)
+bool CMYLexer::FindToken(int FindToken1, int FindToken2)
 {
-	bool finded = FALSE;
-
-	int *seekType = new int[num];
-
-	va_list ap;
-	va_start(ap, num);
-	for (int i = 0; i < num; i++)
-	{
-		seekType[i] = va_arg(ap, int);
-	}
-	va_end(ap);
-
 	do
 	{
 		GetNextToken();
-
-		if (s_CurToken_Dw == TOKEND_END)
-		{
-			SAFE_DELETE_ARRAY(seekType);
-			return FALSE;
-		}
-
-		for (int i = 0; i < num; i++)
-		{
-			if (s_CurToken_Dw == seekType[i]) 
-			{ 
-				finded = TRUE;
-				break;
-			}
-		}
-
-	} while (!finded);
-
-	SAFE_DELETE_ARRAY(seekType);
-	
-	return TRUE;
-
-
+		if (s_CurToken_Dw == FindToken1 || s_CurToken_Dw == FindToken2)return TRUE;
+	} while (s_CurToken_Dw != TOKEND_END);
+	return FALSE;
 }
 
 bool CMYLexer::FindToken_Until(int FindToken, int stop)
@@ -274,43 +235,35 @@ bool CMYLexer::FindToken_InBlock(int FindToken)
 {
 	return FindToken_Until(FindToken, TOKEND_BLOCK_END);
 }
-bool CMYLexer::FindToken_Multi_Until(int num, int stop, ...)
+
+bool CMYLexer::FindToken_UseTable(std::unordered_set<DWORD>& table)
 {
-	bool finded = FALSE;
-	
-
-	int *seekType = new int[num];
-
-	va_list ap;
-	va_start(ap, stop);
-	for (int i = 0; i < num; i++)
-	{
-		seekType[i] = va_arg(ap, int);
-	}
-	va_end(ap);     
-
 	do
 	{
+		//next
 		GetNextToken();
-		if (s_CurToken_Dw == stop|| s_CurToken_Dw == TOKEND_END)
-		{
-			if (seekType != NULL) { delete[] seekType; seekType = NULL; }
-			return FALSE;
-		}
 
-		for (int i = 0; i < num; i++)
-		{
-			if (s_CurToken_Dw == seekType[i]) { finded = TRUE; break; }
-		}
+		if (table.find(s_CurToken_Dw) != table.end())
+			return true;
 
-	} while (finded == FALSE);
+	} while (s_CurToken_Dw != TOKEND_END);
 
-	if (seekType != NULL) { delete[] seekType; seekType = NULL; }
-	return TRUE;
-
-
+	return FALSE;
 }
+bool CMYLexer::FindToken_UseTable_Until(int stop, std::unordered_set<DWORD>& table) 
+{
+	do
+	{
+		//next
+		GetNextToken();
 
+		if (table.find(s_CurToken_Dw) != table.end())
+			return true;
+
+	} while (s_CurToken_Dw != TOKEND_END && s_CurToken_Dw!= stop);
+
+	return FALSE;
+}
 
 
 bool CMYLexer::GetInt(int &Get)

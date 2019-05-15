@@ -130,22 +130,22 @@ int CSystem::Run()
 	HACCEL hAccelTable = LoadAccelerators(g_hInst, MAKEINTRESOURCE(IDC_HELLOWORLD));
 
 	// Main message loop:
-	//while (msg.message != WM_QUIT)
-	//{
-	//	if (::PeekMessage(&msg, 0, 0, 0, PM_REMOVE))
-	//	{
-	//		::TranslateMessage(&msg);
-	//		::DispatchMessage(&msg);
-	//	}
+	while (msg.message != WM_QUIT)
+	{
+		if (::PeekMessage(&msg, 0, 0, 0, PM_REMOVE))
+		{
+			::TranslateMessage(&msg);
+			::DispatchMessage(&msg);
+		}
 
 
-	while (GetMessage(&msg, nullptr, 0, 0))
+	/*while (GetMessage(&msg, nullptr, 0, 0))
 	{
 		if (!TranslateAccelerator(msg.hwnd, hAccelTable, &msg))
 		{
 			TranslateMessage(&msg);
 			DispatchMessage(&msg);
-		}
+		}*/
 		
 			float currTime = (float)timeGetTime();
 			float timeDelta = (currTime - lastTime)*0.001f;

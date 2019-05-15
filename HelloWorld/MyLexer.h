@@ -3,7 +3,7 @@
 #include<fstream>
 #include<map>
 #include"TokenDefine.h"
-
+#include<unordered_set>
 
 //-------------------------------
 //Class My Lexer
@@ -33,10 +33,14 @@ public:
 
 
 	bool FindToken(int FindToken);
-	bool FindToken_Multi(int num, ...);
+	bool FindToken(int FindToken1, int FindToken2);
+
 	bool FindToken_Until(int FindToken, int stop);
 	bool FindToken_InBlock(int FindToken);
-	bool FindToken_Multi_Until(int num, int stop, ...);
+	
+	bool FindToken_UseTable(std::unordered_set<DWORD>& table);
+	bool FindToken_UseTable_Until(int stop, std::unordered_set<DWORD>& table);
+
 
 	bool GetInt(int &Get);
 	bool GetWORD(WORD &Get);

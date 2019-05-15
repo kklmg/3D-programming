@@ -4,6 +4,8 @@
 #include<time.h>
 #include"Asedata.h"
 #include"Object.h"
+#include"Trie.h"
+
 
 struct Vertex
 {
@@ -89,13 +91,18 @@ bool CObjectMng::Init()
 void CObjectMng::CreateObject() 
 {
 	HRESULT hr = 0;
-	//box.ParsingAll("ASEFile/P38.ASE");
+
+
+
 
 	//obj00.Init("ASEFile/box2.ASE");
 
-	obj00.Init("ASEFile/MaterialBox.ASE");
+	//obj00.Init("ASEFile/MaterialBox.ASE");
 	
-	//obj00.Init("ASEFile/Rabbit.ASE");
+	
+	obj00.Init("ASEFile/P38.ASE");
+
+
 	//obj00.Init("ASEFile/03IK-Joe.ASE");
 	//obj00.Init("ASEFile/MaterialBox.ASE");
 

@@ -5,6 +5,8 @@
 #include"Asedata.h"
 
 
+#include<time.h>
+
 ASEData::CMesh::CMesh() 
 	:
 	m_wNumVertex(0),
@@ -31,12 +33,26 @@ bool ASEData::CMesh::ParseAll(CMYLexer *lexer)
 {
 	lexer->MovetoBlockStart();
 
-	while ((lexer->FindToken_Multi_Until(14, TOKEND_BLOCK_END,
-		TOKENR_MESH_NUMVERTEX, TOKENR_MESH_NUMFACES, TOKENR_MESH_NUMTVERTEX,
-		TOKENR_MESH_NUMTVFACES, TOKENR_MESH_NUMBONE, TOKENR_MESH_NUMSKINWEIGHT,
-		TOKENR_MESH_VERTEX_LIST, TOKENR_MESH_FACE_LIST, TOKENR_MESH_TVERTLIST,
-		TOKENR_MESH_TFACELIST, TOKENR_MESH_NORMALS, TOKENR_BONE_LIST,
-		TOKENR_MESH_WVERTEXS, TOKEND_BLOCK_START)))
+	std::unordered_set<DWORD> Memo;
+	Memo.insert(TOKENR_MESH_NUMVERTEX);
+	Memo.insert(TOKENR_MESH_NUMFACES);
+	Memo.insert(TOKENR_MESH_NUMTVERTEX);
+	Memo.insert(TOKENR_MESH_NUMTVFACES);
+	Memo.insert(TOKENR_MESH_NUMBONE);
+	Memo.insert(TOKENR_MESH_NUMSKINWEIGHT);
+	Memo.insert(TOKENR_MESH_VERTEX_LIST);
+	Memo.insert(TOKENR_MESH_FACE_LIST);
+	Memo.insert(TOKENR_MESH_TVERTLIST);
+	Memo.insert(TOKENR_MESH_TFACELIST);
+	Memo.insert(TOKENR_MESH_NORMALS);
+	Memo.insert(TOKENR_BONE_LIST);
+	Memo.insert(TOKENR_MESH_WVERTEXS);
+	Memo.insert(TOKEND_BLOCK_START);
+
+
+	double __b = clock();
+
+	while ((lexer->FindToken_UseTable_Until(TOKEND_BLOCK_END,Memo)))
 	{
 		switch (CMYLexer::s_CurToken_Dw)
 		{
@@ -56,6 +72,10 @@ bool ASEData::CMesh::ParseAll(CMYLexer *lexer)
 		case TOKEND_BLOCK_START:		 lexer->SkipCurBlock(); break;
 		}
 	}
+	double __e = clock();
+
+	double delta = __e - __b;
+
 
 	//check vertex type
 	m_dwFVF = CheckFormat();

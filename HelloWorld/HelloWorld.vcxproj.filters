@@ -76,6 +76,9 @@
     <Filter Include="Main">
       <UniqueIdentifier>{831446b1-6db9-4984-8370-32bdf7051970}</UniqueIdentifier>
     </Filter>
+    <Filter Include="MyData\DS\Trie">
+      <UniqueIdentifier>{eddcb7c1-6951-43d8-b904-b8a2f87ee9b7}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -156,6 +159,12 @@
     <ClInclude Include="Object.h">
       <Filter>Object</Filter>
     </ClInclude>
+    <ClInclude Include="HashTree.h">
+      <Filter>MyData\DS</Filter>
+    </ClInclude>
+    <ClInclude Include="Trie.h">
+      <Filter>MyData\DS\Trie</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Global.cpp">
@@ -223,6 +232,9 @@
     </ClCompile>
     <ClCompile Include="myds.cpp">
       <Filter>MyData\DS</Filter>
+    </ClCompile>
+    <ClCompile Include="Trie.cpp">
+      <Filter>MyData\DS\Trie</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
