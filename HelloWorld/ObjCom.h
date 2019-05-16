@@ -4,9 +4,8 @@
 
 namespace OBJ 
 {
-	struct STFace
+	struct STFaceMat
 	{
-		WORD wID[3];
 		WORD wMatID;
 		WORD wTexID;
 	};
@@ -31,9 +30,9 @@ namespace OBJ
 
 		bool InitVBuffer(DWORD FVF, DWORD vtxCount,DWORD size, void* ptr);
 	
-		void AddFace(STFace& face);
+		void AddFaceMat(STFaceMat& face);
 
-		std::vector<STFace>& GetFaceVec();
+		std::vector<STFaceMat>& GetFaceMatVec();
 		bool InitIBuffer(void* ptr);
 
 		bool LockIDB(void** Address);
@@ -56,7 +55,7 @@ namespace OBJ
 		IDirect3DVertexBuffer9* m_pVB;
 		IDirect3DIndexBuffer9*  m_pIB;
 
-		std::vector<STFace> m_vecFaces;
+		std::vector<STFaceMat> m_vecFaceMat;
 	};
 
 	class CGemoObj

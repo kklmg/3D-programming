@@ -153,7 +153,7 @@ void CObjectMng::CreateObject()
 	m_rpDevice->SetRenderState(D3DRS_LIGHTING, true);
 	m_rpDevice->SetRenderState(D3DRS_SPECULARENABLE, false);
 	m_rpDevice->SetRenderState(D3DRS_FILLMODE, _D3DFILLMODE::D3DFILL_SOLID);
-//	m_rpDevice->SetRenderState(D3DRS_CULLMODE, _D3DCULL::D3DCULL_CCW);
+	//m_rpDevice->SetRenderState(D3DRS_CULLMODE, _D3DCULL::D3DCULL_CW);
 }
 
 

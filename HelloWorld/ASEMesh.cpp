@@ -260,9 +260,9 @@ bool ASEData::CMesh::ParseNormal(CMYLexer *lexer)
 		lexer->GetWORD(vtxID_C);
 
 		//parse vector3
-		lexer->GetFloat(m_vecFace[FaceID]->m_Normal[1][0]);
-		lexer->GetFloat(m_vecFace[FaceID]->m_Normal[1][2]);
-		lexer->GetFloat(m_vecFace[FaceID]->m_Normal[1][1]);
+		lexer->GetFloat(m_vecFace[FaceID]->m_Normal[2][0]);
+		lexer->GetFloat(m_vecFace[FaceID]->m_Normal[2][2]);
+		lexer->GetFloat(m_vecFace[FaceID]->m_Normal[2][1]);
 
 
 
@@ -274,9 +274,9 @@ bool ASEData::CMesh::ParseNormal(CMYLexer *lexer)
 		lexer->GetWORD(vtxID_B);
 
 		//parse vector3
-		lexer->GetFloat(m_vecFace[FaceID]->m_Normal[2][0]);
-		lexer->GetFloat(m_vecFace[FaceID]->m_Normal[2][2]);
-		lexer->GetFloat(m_vecFace[FaceID]->m_Normal[2][1]);
+		lexer->GetFloat(m_vecFace[FaceID]->m_Normal[1][0]);
+		lexer->GetFloat(m_vecFace[FaceID]->m_Normal[1][2]);
+		lexer->GetFloat(m_vecFace[FaceID]->m_Normal[1][1]);
 
 	}
 
@@ -334,6 +334,8 @@ bool ASEData::CMesh::CreateVI_P(void **Getvtx, WORD &vtxcount, WORD **Indicies)
 			//fill vertex slot			
 			CurVTXSlot->Pos = m_vecVertex[vtxData[i].wPos];
 
+			++CurVTXSlot;
+
 			//fill index slot	
 			*CurIDSlot = MAXID;
 			++MAXID;
@@ -383,6 +385,8 @@ bool ASEData::CMesh::CreateVI_PN(void **Getvtx, WORD &vtxcount, WORD **Indicies)
 				CurVTXSlot->Pos = m_vecVertex[vtxData[i].wPos];
 				CurVTXSlot->Normal = vtxData[i].f3Normal.vt3();		
 				++vtxcount;
+				++CurVTXSlot;
+
 
 				//fill index slot	
 				*CurIDSlot = MAXID;
@@ -506,6 +510,7 @@ bool ASEData::CMesh::CreateVI_PT(void **Getvtx, WORD &vtxcount, WORD **Indicies)
 				CurVTXSlot->Pos = m_vecVertex[vtxData[i].wPos];			
 				CurVTXSlot->Tex = m_vecTex[vtxData[i].wTex];
 				++vtxcount;
+				++CurVTXSlot;
 
 				//fill index slot	
 				*CurIDSlot = MAXID;
@@ -556,7 +561,7 @@ OBJ::CMesh* ASEData::CMesh::CreateMesh()
 
 	//create new mesh
 	OBJ::CMesh *newmesh = new OBJ::CMesh();
-	std::vector<OBJ::STFace>& MeshFacies = newmesh->GetFaceVec();
+	std::vector<OBJ::STFaceMat>& MeshFacies = newmesh->GetFaceMatVec();
 
 	//set vertex
 	newmesh->InitVBuffer(m_dwFVF, vtxcount, m_wPerVtxSize, Vertexies);
@@ -568,9 +573,6 @@ OBJ::CMesh* ASEData::CMesh::CreateMesh()
 	int i = 0, j = 0;
 	for (; i < facecount; ++i, j += 3)
 	{
-		MeshFacies[i].wID[0] = Indicies[j];
-		MeshFacies[i].wID[1] = Indicies[j + 1];
-		MeshFacies[i].wID[2] = Indicies[j + 2];
 		MeshFacies[i].wMatID = m_vecFace[i]->RefMat;
 		MeshFacies[i].wTexID = m_vecFace[i]->RefTex;
 	}

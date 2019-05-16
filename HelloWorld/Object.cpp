@@ -64,6 +64,7 @@ bool CObject::Draw()
 	{
 		ptr->Draw(m_vecMat);
 	}
+
 	return true;
 }
 

@@ -63,9 +63,9 @@ bool OBJ::CMesh::InitVBuffer(DWORD FVF, DWORD vtxCount, DWORD size, void* ptr)
 	return true;
 }
 
-void OBJ::CMesh::AddFace(STFace& face)
+void OBJ::CMesh::AddFaceMat(STFaceMat& face)
 {
-	m_vecFaces.push_back(face);
+	m_vecFaceMat.push_back(face);
 	m_dwFaceCount++;
 }
 
@@ -90,19 +90,19 @@ bool OBJ::CMesh::LockVTXB(DWORD FVF, DWORD vtxCount, DWORD size,void** GetAddres
 }
 
 
-std::vector<OBJ::STFace>&
-OBJ::CMesh::GetFaceVec()
+std::vector<OBJ::STFaceMat>&
+OBJ::CMesh::GetFaceMatVec()
 {
-	return m_vecFaces;
+	return m_vecFaceMat;
 }
 
 bool OBJ::CMesh::InitIBuffer(void* ptr)
 {
-	m_dwFaceCount = m_vecFaces.size();
+	m_dwFaceCount = m_vecFaceMat.size();
 
 	//create index buffer
 	g_pDevice->CreateIndexBuffer(
-		m_vecFaces.size() * sizeof(WORD) * 3,//size
+		m_vecFaceMat.size() * sizeof(WORD) * 3,//size
 		D3DUSAGE_WRITEONLY,
 		D3DFMT_INDEX16,
 		D3DPOOL_MANAGED,
@@ -142,18 +142,18 @@ bool OBJ::CMesh::DrawEX(std::vector<STMaterial*>&mat)
 {
 	SetSource();
 
-	for (int i = 0; i < m_vecFaces.size(); ++i) 
+	int i = 0, j = 0;
+	for (; i < m_vecFaceMat.size();++i,j+=3 )
 	{
-		g_pDevice->SetMaterial(&mat[m_vecFaces[i].wMatID]->mat);
-		g_pDevice->SetTexture(0, mat[m_vecFaces[i].wMatID]->pTexture);
-		g_pDevice->DrawIndexedPrimitive(D3DPT_TRIANGLELIST, 0, 0, m_dwVTXCount, i, i + 1);	
+		g_pDevice->SetMaterial(&mat[m_vecFaceMat[i].wMatID]->mat);
+		g_pDevice->SetTexture(0, mat[m_vecFaceMat[i].wMatID]->pTexture);
+		g_pDevice->DrawIndexedPrimitive(D3DPT_TRIANGLELIST, 0, 0, m_dwVTXCount, j, 1);
 	}
-
 	return true;
 }
 bool OBJ::CMesh::DrawFace(WORD Index) 
 {
-	if (Index > m_vecFaces.size())return false;
+	if (Index > m_vecFaceMat.size())return false;
 	return	g_pDevice->DrawIndexedPrimitive(D3DPT_TRIANGLELIST, 0, 0, m_dwVTXCount, Index, Index+1);
 }
 
