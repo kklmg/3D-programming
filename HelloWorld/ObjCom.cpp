@@ -197,3 +197,47 @@ void OBJ::CGemoObj::SetMatID(WORD mat)
 {
 	m_wMatId = mat;
 }
+
+void  OBJ::CObjNode::InitLocal() 
+{
+	__InitLocalHelper(this, &g_IDMATRIX);
+}
+
+
+void OBJ::CObjNode::__InitLocalHelper(CObjNode*node, const D3DXMATRIX *parLocalTM) 
+{
+	D3DXMATRIX Parinv;
+	D3DXMatrixInverse(&Parinv, nullptr, parLocalTM);
+
+	node->m_mtxLocal = node->m_mtxAseWorld * Parinv;
+
+	
+	for (auto ptr : node->m_vecChildren)
+	{
+		//recursion
+		__InitLocalHelper(ptr, &node->m_mtxAseWorld);
+	}
+}
+
+void OBJ::CObjNode::__DrawHelper(CObjNode*node, const D3DXMATRIX *worldTM, std::vector<STMaterial*>&mat)
+{
+	node->m_mtxWorld = node->m_mtxLocal * (*worldTM);
+	g_pDevice->SetTransform(D3DTS_WORLD, &node->m_mtxWorld);
+	node->Draw(mat);
+
+	for (auto ptr : node->m_vecChildren)
+	{
+		//recursion
+		__DrawHelper(ptr, &node->m_mtxWorld, mat);
+	}
+}
+
+bool OBJ::CObjNode::DrawAll(std::vector<STMaterial*>&mat, const D3DXMATRIX* World)
+{
+	if(!World)
+		__DrawHelper(this, &g_IDMATRIX, mat);
+	else	
+		__DrawHelper(this, World, mat);
+	return true;
+}
+

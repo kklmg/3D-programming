@@ -29,3 +29,6 @@ extern const D3DXCOLOR       g_CYAN;
 extern const D3DXCOLOR    g_MAGENTA;
 
 extern const D3DXCOLOR	g_BACKCOLOR;
+
+
+extern const D3DXMATRIX g_IDMATRIX;

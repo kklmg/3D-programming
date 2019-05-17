@@ -10,7 +10,6 @@ namespace OBJ
 		WORD wTexID;
 	};
 
-
 	struct STMaterial 
 	{
 		STMaterial();
@@ -58,7 +57,67 @@ namespace OBJ
 		std::vector<STFaceMat> m_vecFaceMat;
 	};
 
-	class CGemoObj
+	class CObjNode
+	{
+	public:
+		CObjNode():m_pParent(nullptr) {}
+		virtual ~CObjNode(){}
+
+		//virtual Draw();
+		std::string m_strNodeName;
+		std::string m_strParentName;
+
+		D3DXMATRIX m_mtxAseWorld;
+
+		D3DXMATRIX m_mtxLocal;
+		D3DXMATRIX m_mtxWorld;
+
+		D3DXMATRIX m_mtxScale;
+		D3DXMATRIX m_mtxTranslate;
+		D3DXMATRIX m_mtxRotate;
+
+
+		void update() 
+		{
+			if (m_pParent)
+			{
+				//m_mtxWorld = m_mtxLocal*m_pParent->m_mtxWorld;
+			}
+			else
+			{
+
+			}
+		
+		
+
+
+		}
+
+		void SetChildren(CObjNode* child)
+		{
+			if(child)
+			m_vecChildren.push_back(child);
+		}
+		virtual bool Draw(std::vector<STMaterial*>&mat)
+		{
+			return true;
+		}
+		virtual bool DrawAll(std::vector<STMaterial*>&mat, const D3DXMATRIX* World = nullptr);
+
+		void InitLocal();
+
+	private:
+		void __InitLocalHelper(CObjNode*node, const D3DXMATRIX *parLocalTM);
+		void __DrawHelper(CObjNode*node, const D3DXMATRIX *ParWorldTM, std::vector<STMaterial*>&mat);
+		
+
+		CObjNode* m_pParent;
+
+		std::vector<CObjNode*>m_vecChildren;
+	
+	};
+
+	class CGemoObj: public CObjNode
 	{
 	public:
 		CGemoObj();
@@ -66,8 +125,9 @@ namespace OBJ
 
 		void SetMesh(CMesh* mesh);
 		void SetMatID(WORD mat);
-		bool Draw(std::vector<STMaterial*>&mat);
+		virtual bool Draw(std::vector<STMaterial*>&mat);
 		
+
 	private:
 		CMesh* m_pMesh;
 		WORD m_wMatId;

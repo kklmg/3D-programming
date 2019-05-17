@@ -2,6 +2,7 @@
 #include"TokenDefine.h"
 #include"Vertex.h"
 #include<unordered_set>
+#include<algorithm>
 #include"Asedata.h"
 
 
@@ -246,26 +247,7 @@ bool STMaterial::CreateD3DMat(LPCSTR FileDir, OBJ::STMaterial**result, STMateria
 	return true;
 }
 
-STLine::STLine()
-	:
-	m_bClosed(false),
-	m_dwVertexCount(0),
-	m_pLineVertex(nullptr)
-{
-}
-STLine::~STLine() 
-{
-}
 
-STNodeTM::STNodeTM() 
-	:
-	m_fTM_ROTANGLE(0),
-	m_fTM_SCALEAXISANG(0)
-{
-}
-STNodeTM::~STNodeTM()
-{
-}
 
 
 bool STScene::parse(CMYLexer *lexer)
@@ -445,13 +427,16 @@ void CASEData::ParseGemoObject()
 		case TOKENR_NODE_NAME:		m_plexer->GetString(GeoObj->m_strNodeName); break;
 		case TOKENR_NODE_PARENT:	m_plexer->GetString(GeoObj->m_strNodeParent); break;
 		case TOKENR_MATERIAL_REF:	m_plexer->GetWORD(GeoObj->m_wMatRef);  break;
-		case TOKENR_NODE_TM:		ParseNodeTM(&GeoObj->m_NodeTM); break;
+		case TOKENR_NODE_TM:		GeoObj->m_NodeTM.parse(m_plexer); break;
 		//case TOKENR_TM_ANIMATION:	LoadAnimationTM(&GeoObj->AniTM); break;
 		case TOKENR_MESH:			GeoObj->m_Mesh.ParseAll(m_plexer); break;
 		case TOKEND_BLOCK_START:	m_plexer->SkipCurBlock(); break;
 		}
 	}
 	m_vecGemoObj.push_back(GeoObj);
+
+	//create inheritTable
+	m_InheritData.InsertData(GeoObj->m_strNodeParent, GeoObj->m_strNodeName);
 }
 
 bool CASEData::ParseMaterial()
@@ -475,93 +460,6 @@ bool CASEData::ParseMaterial()
 	}
 	return TRUE;
 }
-
-//parse Detail
-bool CASEData::ParseNodeTM(STNodeTM *NodeTM)
-{
-	m_plexer->MovetoBlockStart();
-
-	//Inherit Data
-	//---------------------------------------------------
-	m_plexer->FindToken(TOKENR_INHERIT_POS);
-	m_plexer->GetFloat(NodeTM->m_vt3INHERIT_POS.x);
-	m_plexer->GetFloat(NodeTM->m_vt3INHERIT_POS.z);
-	m_plexer->GetFloat(NodeTM->m_vt3INHERIT_POS.y);
-
-	m_plexer->FindToken(TOKENR_INHERIT_ROT);
-	m_plexer->GetFloat(NodeTM->m_vt3INHERIT_ROT.x);
-	m_plexer->GetFloat(NodeTM->m_vt3INHERIT_ROT.z);
-	m_plexer->GetFloat(NodeTM->m_vt3INHERIT_ROT.y);
-
-	m_plexer->FindToken(TOKENR_INHERIT_SCL);
-	m_plexer->GetFloat(NodeTM->m_vt3INHERIT_SCL.x);
-	m_plexer->GetFloat(NodeTM->m_vt3INHERIT_SCL.z);
-	m_plexer->GetFloat(NodeTM->m_vt3INHERIT_SCL.y);
-
-
-	//Matrix Data
-	//---------------------------------------------------
-	m_plexer->FindToken(TOKENR_TM_ROW0);
-	m_plexer->GetFloat(NodeTM->m_vt3TM_ROW0.x);
-	m_plexer->GetFloat(NodeTM->m_vt3TM_ROW0.z);
-	m_plexer->GetFloat(NodeTM->m_vt3TM_ROW0.y);
-
-	m_plexer->FindToken(TOKENR_TM_ROW1);
-	m_plexer->GetFloat(NodeTM->m_vt3TM_ROW1.x);
-	m_plexer->GetFloat(NodeTM->m_vt3TM_ROW1.z);
-	m_plexer->GetFloat(NodeTM->m_vt3TM_ROW1.y);
-
-	m_plexer->FindToken(TOKENR_TM_ROW2);
-	m_plexer->GetFloat(NodeTM->m_vt3TM_ROW2.x);
-	m_plexer->GetFloat(NodeTM->m_vt3TM_ROW2.z);
-	m_plexer->GetFloat(NodeTM->m_vt3TM_ROW2.y);
-
-	m_plexer->FindToken(TOKENR_TM_ROW3);
-	m_plexer->GetFloat(NodeTM->m_vt3TM_ROW3.x);
-	m_plexer->GetFloat(NodeTM->m_vt3TM_ROW3.z);
-	m_plexer->GetFloat(NodeTM->m_vt3TM_ROW3.y);
-
-
-	//Position Data
-	//---------------------------------------------------
-	m_plexer->FindToken(TOKENR_TM_POS);
-	m_plexer->GetFloat(NodeTM->m_vt3TM_POS.x);
-	m_plexer->GetFloat(NodeTM->m_vt3TM_POS.z);
-	m_plexer->GetFloat(NodeTM->m_vt3TM_POS.y);
-
-
-	//Rotation Data
-	//---------------------------------------------------
-	m_plexer->FindToken(TOKENR_TM_ROTAXIS);
-	m_plexer->GetFloat(NodeTM->m_vt3TM_ROTAXIS.x);
-	m_plexer->GetFloat(NodeTM->m_vt3TM_ROTAXIS.z);
-	m_plexer->GetFloat(NodeTM->m_vt3TM_ROTAXIS.y);
-
-	m_plexer->FindToken(TOKENR_TM_ROTANGLE);
-	m_plexer->GetFloat(NodeTM->m_fTM_ROTANGLE);
-
-	//Scale Data
-	//---------------------------------------------------
-	m_plexer->FindToken(TOKENR_TM_SCALE);
-	m_plexer->GetFloat(NodeTM->m_vt3TM_SCALE.x);
-	m_plexer->GetFloat(NodeTM->m_vt3TM_SCALE.z);
-	m_plexer->GetFloat(NodeTM->m_vt3TM_SCALE.y);
-
-	m_plexer->FindToken(TOKENR_TM_SCALEAXIS);
-	m_plexer->GetFloat(NodeTM->m_vt3TM_SCALEAXIS.x);
-	m_plexer->GetFloat(NodeTM->m_vt3TM_SCALEAXIS.z);
-	m_plexer->GetFloat(NodeTM->m_vt3TM_SCALEAXIS.y);
-
-
-
-	m_plexer->FindToken(TOKENR_TM_SCALEAXISANG);
-	m_plexer->GetFloat(NodeTM->m_fTM_SCALEAXISANG);
-
-	m_plexer->MovetoBlockEnd();
-
-	return TRUE;
-}
-
 
 
 

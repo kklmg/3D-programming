@@ -92,21 +92,32 @@ void CObjectMng::CreateObject()
 {
 	HRESULT hr = 0;
 
+	
 
+	obj00.Init("ASEFile/03IK-Joe.ASE");
+	//obj00.Init("ASEFile/Dragon2.ASE");
 
-
-	//obj00.Init("ASEFile/box2.ASE");
+	
 
 	//obj00.Init("ASEFile/MaterialBox.ASE");
 	
 	
-	obj00.Init("ASEFile/P38.ASE");
-
-
-	//obj00.Init("ASEFile/03IK-Joe.ASE");
-	//obj00.Init("ASEFile/MaterialBox.ASE");
+	//obj00.Init("ASEFile/P38.ASE");
+	
+	//obj00.Init("ASEFile/Dragon2.ASE");
+	//obj00.Init("ASEFile/TigerTank.ASE");
+	//obj00.Init("ASEFile/teapot.ASE");
 
 	
+
+	
+	//obj00.Init("ASEFile/dynamic_walk.ASE");
+
+	//obj00.Init("ASEFile/dynamic_walk.ASE");
+	//obj00.Init("ASEFile/FlyingSpaceFighter06.ASE");
+	
+
+
 	//-----------------------------------------------------------------------------
 	//Set Light
 	//-----------------------------------------------------------------------------
@@ -153,7 +164,10 @@ void CObjectMng::CreateObject()
 	m_rpDevice->SetRenderState(D3DRS_LIGHTING, true);
 	m_rpDevice->SetRenderState(D3DRS_SPECULARENABLE, false);
 	m_rpDevice->SetRenderState(D3DRS_FILLMODE, _D3DFILLMODE::D3DFILL_SOLID);
+	//m_rpDevice->SetRenderState(D3DRS_FILLMODE, _D3DFILLMODE::D3DFILL_WIREFRAME);
 	//m_rpDevice->SetRenderState(D3DRS_CULLMODE, _D3DCULL::D3DCULL_CW);
+	D3DMATERIAL9 defaultmat = InitMtrl(g_WHITE, g_WHITE, g_BLACK, g_BLACK, 10);
+	m_rpDevice->SetMaterial(&defaultmat);
 }
 
 
@@ -197,7 +211,9 @@ void CObjectMng::DrawObject()
 
 
 
-	m_rpDevice->SetTransform(D3DTS_WORLD, &p);
+	//m_rpDevice->SetTransform(D3DTS_WORLD, &p);
+
+	obj00.SetTransform(&p);
 
 	obj00.Draw();
 }

@@ -165,6 +165,7 @@
     <ClInclude Include="HashTree.h" />
     <ClInclude Include="HelloWorld.h" />
     <ClInclude Include="LightMng.h" />
+    <ClInclude Include="MyMath.h" />
     <ClInclude Include="myds.h" />
     <ClInclude Include="MyLexer.h" />
     <ClInclude Include="mystruct.h" />
@@ -172,6 +173,7 @@
     <ClInclude Include="ObjCom.h" />
     <ClInclude Include="Object.h" />
     <ClInclude Include="ObjectMng.h" />
+    <ClInclude Include="ObjNode.h" />
     <ClInclude Include="Position.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="stdafx.h" />
@@ -193,6 +195,7 @@
     <ClCompile Include="GraphicsMng.cpp" />
     <ClCompile Include="HelloWorld.cpp" />
     <ClCompile Include="LightMng.cpp" />
+    <ClCompile Include="MyMath.cpp" />
     <ClCompile Include="myds.cpp" />
     <ClCompile Include="Mylexer.cpp" />
     <ClCompile Include="mystruct.cpp" />

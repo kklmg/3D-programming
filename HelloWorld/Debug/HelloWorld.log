@@ -1,6 +1,7 @@
-﻿  ObjectMng.cpp
+﻿  Object.cpp
 c:\users\liming\documents\visual studio 2015\projects\helloworld\helloworld\trie.h(113): warning C4812: obsolete declaration style: please use 'STrie::Trie_Table<Value>::Trie_Table' instead
 c:\users\liming\documents\visual studio 2015\projects\helloworld\helloworld\trie.h(126): warning C4812: obsolete declaration style: please use 'STrie::Trie_Table<Value>::~Trie_Table' instead
-c:\users\liming\documents\visual studio 2015\projects\helloworld\helloworld\asedata.h(346): warning C4018: '<': signed/unsigned mismatch
+c:\users\liming\documents\visual studio 2015\projects\helloworld\helloworld\asedata.h(357): warning C4018: '<': signed/unsigned mismatch
+c:\users\liming\documents\visual studio 2015\projects\helloworld\helloworld\object.cpp(29): warning C4267: 'initializing': conversion from 'size_t' to 'WORD', possible loss of data
   HelloWorld.vcxproj -> C:\Users\LiMing\Documents\Visual Studio 2015\Projects\HelloWorld\Debug\HelloWorld.exe
   HelloWorld.vcxproj -> C:\Users\LiMing\Documents\Visual Studio 2015\Projects\HelloWorld\Debug\HelloWorld.pdb (Full PDB)

@@ -79,6 +79,9 @@
     <Filter Include="MyData\DS\Trie">
       <UniqueIdentifier>{eddcb7c1-6951-43d8-b904-b8a2f87ee9b7}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Transform">
+      <UniqueIdentifier>{46791012-9b00-4db5-95b3-2079ea50f842}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -165,6 +168,12 @@
     <ClInclude Include="Trie.h">
       <Filter>MyData\DS\Trie</Filter>
     </ClInclude>
+    <ClInclude Include="ObjNode.h">
+      <Filter>Default</Filter>
+    </ClInclude>
+    <ClInclude Include="MyMath.h">
+      <Filter>Transform</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Global.cpp">
@@ -235,6 +244,9 @@
     </ClCompile>
     <ClCompile Include="Trie.cpp">
       <Filter>MyData\DS\Trie</Filter>
+    </ClCompile>
+    <ClCompile Include="MyMath.cpp">
+      <Filter>Transform</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

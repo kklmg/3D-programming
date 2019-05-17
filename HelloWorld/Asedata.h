@@ -105,13 +105,19 @@ namespace ASEData
 	};
 
 	//-----------------------------------------------------------------
-	//Matrix Data
+	//Node Transform Matrix 
 	//-----------------------------------------------------------------
 	struct STNodeTM
 	{
 	public:
 		STNodeTM();
 		~STNodeTM();
+
+		bool parse(CMYLexer *lexer);
+
+		bool GetWorldTM(D3DXMATRIX &matrix);
+		bool GetWorldTMEx(D3DXMATRIX &_World, D3DXMATRIX& _Trans, D3DXMATRIX&_Rotate, D3DXMATRIX& _Scale);
+
 
 		D3DXVECTOR3	m_vt3INHERIT_POS;
 		D3DXVECTOR3 m_vt3INHERIT_ROT;
@@ -241,18 +247,18 @@ namespace ASEData
 		bool ParseTexture(CMYLexer *lexer);
 		bool ParseTextureFace(CMYLexer *lexer);
 		bool ParseNormal(CMYLexer *lexer);
+		
 
-
-		bool RecieveVTX_INDEX(void **Getvtx,WORD &vtxcount,WORD **Indicies);
-
-		bool CreateVI_P(void **Getvtx, WORD &vtxcount, WORD **Indicies);
-		bool CreateVI_PN(void **Getvtx, WORD &vtxcount, WORD **Indicies);
-		bool CreateVI_PNT(void **Getvtx, WORD &vtxcount, WORD **Indicies);
-		bool CreateVI_PT(void **Getvtx, WORD &vtxcount, WORD **Indicies);
+		bool RecieveVTX_INDEX(void **Getvtx,WORD &vtxcount,WORD **Indicies, const D3DXMATRIX *Transform);
+	//private:
+		bool CreateVI_P(void **Getvtx, WORD &vtxcount, WORD **Indicies, const D3DXMATRIX *Transform);
+		bool CreateVI_PN(void **Getvtx, WORD &vtxcount, WORD **Indicies, const D3DXMATRIX *Transform);
+		bool CreateVI_PNT(void **Getvtx, WORD &vtxcount, WORD **Indicies, const D3DXMATRIX *Transform);
+		bool CreateVI_PT(void **Getvtx, WORD &vtxcount, WORD **Indicies, const D3DXMATRIX *Transform);
 
 
 		DWORD CheckFormat();
-		OBJ::CMesh* CreateMesh();
+		OBJ::CMesh* CreateMesh(const D3DXMATRIX *Transform = nullptr);
 
 
 
@@ -266,7 +272,7 @@ namespace ASEData
 		WORD m_wPerVtxSize;
 		bool m_bNormal;
 
-
+		
 
 		//Data Container
 		std::vector<D3DXVECTOR3> m_vecVertex;	//pos Data
@@ -293,25 +299,12 @@ namespace ASEData
 
 	struct STGEOMObject :public STObject
 	{
-		STGEOMObject() 
-			:
-			m_wMatRef(USHRT_MAX)
-		{	
-		}
+		STGEOMObject();
+
+		OBJ::CGemoObj* CreateGemoObj();
 
 		CMesh m_Mesh;
-		WORD  m_wMatRef;
-
-		OBJ::CGemoObj* CreateGemoObj()
-		{
-			OBJ::CGemoObj* newobj = new OBJ::CGemoObj;
-		
-			newobj->SetMesh(m_Mesh.CreateMesh());
-			newobj->SetMatID(m_wMatRef);
-
-			return newobj;
-		}
-		
+		WORD  m_wMatRef;	
 	};
 
 	struct STShapeObject :public STObject
@@ -330,6 +323,24 @@ namespace ASEData
 		//STHelperObject();
 		//~STHelperObject();
 	};
+
+	class CInheritData 
+	{
+	public:
+		void InsertData(std::string &parent, std::string &child);
+
+		bool IsRoot(std::string NodeName);
+
+		bool FindChildren(const std::string &Parent,std::list<std::string>**Receive);
+
+	private:
+	//private:
+		std::map<std::string, std::list<std::string>>m_mapInherit;
+		std::set<std::string>m_SetRoot;
+		
+	};
+
+
 
 	class CASEData
 	{
@@ -352,13 +363,13 @@ namespace ASEData
 		}
 
 
-		//CObject* CreateObject();
+		OBJ::CObjNode* CreateObj()
+		{
+			OBJ::CObjNode* newobj = new OBJ::CObjNode;
 
 
-		/*{
-			LoadSceneInfo(&ASEdata->m_SceneInfo);
-			LoadMaterialAll(ASEdata);
-		}*/
+			return newobj;
+		}
 		
 	private:
 		bool ParseMaterial();
@@ -366,8 +377,6 @@ namespace ASEData
 	
 
 		//bool ParseMaterialHelper(STMaterial *mat);
-
-		bool ParseNodeTM(STNodeTM *NodeTM);
 
 		void ParseGemoObject();
 
@@ -384,5 +393,7 @@ public:
 		std::vector<STHelperObject*> m_vecHelpObj;
 		std::vector<STShapeObject*> m_vecShapeObj;
 		std::vector<STMaterial*>m_vecMaterial;
+
+		CInheritData m_InheritData;
 	};
 }

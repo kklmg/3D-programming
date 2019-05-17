@@ -3,7 +3,7 @@
 #include"Vertex.h"
 
 #include"Asedata.h"
-
+#include"MyMath.h"
 
 #include<time.h>
 
@@ -283,30 +283,28 @@ bool ASEData::CMesh::ParseNormal(CMYLexer *lexer)
 	return TRUE;
 }
 
-bool ASEData::CMesh::RecieveVTX_INDEX(void **Getvtx, WORD &vtxcount, WORD **Indicies)
+bool ASEData::CMesh::RecieveVTX_INDEX
+(void **Getvtx, WORD &vtxcount, WORD **Indicies, const D3DXMATRIX *Transform)
 {
 	switch (m_dwFVF)
 	{
 	case D3DFVF_XYZ:
-		return CreateVI_P(Getvtx, vtxcount, Indicies); break;
+		return CreateVI_P(Getvtx, vtxcount, Indicies, Transform); break;
 
 	case D3DFVF_XYZ | D3DFVF_NORMAL:
-		return 	CreateVI_PN(Getvtx, vtxcount, Indicies); break;
+		return 	CreateVI_PN(Getvtx, vtxcount, Indicies, Transform); break;
 
 	case D3DFVF_XYZ | D3DFVF_NORMAL | D3DFVF_TEX1:
-		return 	CreateVI_PNT(Getvtx, vtxcount, Indicies); break;
+		return 	CreateVI_PNT(Getvtx, vtxcount, Indicies, Transform); break;
 
 	case D3DFVF_XYZ | D3DFVF_TEX1:
-		return 	CreateVI_PT(Getvtx, vtxcount, Indicies); break;
+		return 	CreateVI_PT(Getvtx, vtxcount, Indicies, Transform); break;
 	case 0:return false; break;
 
 	}
-
-
-
 }
 
-bool ASEData::CMesh::CreateVI_P(void **Getvtx, WORD &vtxcount, WORD **Indicies) 
+bool ASEData::CMesh::CreateVI_P(void **Getvtx, WORD &vtxcount, WORD **Indicies, const D3DXMATRIX *Transform)
 {
 	//Init vertex Atrray
 	*Getvtx = new STVTX_P[m_vecVertex.size()];
@@ -332,7 +330,7 @@ bool ASEData::CMesh::CreateVI_P(void **Getvtx, WORD &vtxcount, WORD **Indicies)
 		for (i = 0; i < 3; ++i)
 		{
 			//fill vertex slot			
-			CurVTXSlot->Pos = m_vecVertex[vtxData[i].wPos];
+			CurVTXSlot->Pos = SMath::Transform(&m_vecVertex[vtxData[i].wPos], Transform);
 
 			++CurVTXSlot;
 
@@ -344,7 +342,7 @@ bool ASEData::CMesh::CreateVI_P(void **Getvtx, WORD &vtxcount, WORD **Indicies)
 	}
 	return true;
 }
-bool ASEData::CMesh::CreateVI_PN(void **Getvtx, WORD &vtxcount, WORD **Indicies) 
+bool ASEData::CMesh::CreateVI_PN(void **Getvtx, WORD &vtxcount, WORD **Indicies, const D3DXMATRIX *Transform)
 {
 	//duplicate checker
 	std::map<STVtxData, WORD,CompN>*dplChecker
@@ -382,8 +380,10 @@ bool ASEData::CMesh::CreateVI_PN(void **Getvtx, WORD &vtxcount, WORD **Indicies)
 				dplChecker[vtxData[i].wPos].insert(std::make_pair(vtxData[i], MAXID));
 
 				//fill vertex slot			
-				CurVTXSlot->Pos = m_vecVertex[vtxData[i].wPos];
-				CurVTXSlot->Normal = vtxData[i].f3Normal.vt3();		
+				CurVTXSlot->Pos = SMath::Transform(&m_vecVertex[vtxData[i].wPos], Transform);
+				D3DXVECTOR3 normal = vtxData[i].f3Normal.vt3();
+				CurVTXSlot->Normal = SMath::Transform(&normal, Transform);
+
 				++vtxcount;
 				++CurVTXSlot;
 
@@ -405,7 +405,7 @@ bool ASEData::CMesh::CreateVI_PN(void **Getvtx, WORD &vtxcount, WORD **Indicies)
 	delete[]dplChecker;
 	return true;
 }
-bool ASEData::CMesh::CreateVI_PNT(void **Getvtx, WORD &vtxcount, WORD **Indicies) 
+bool ASEData::CMesh::CreateVI_PNT(void **Getvtx, WORD &vtxcount, WORD **Indicies, const D3DXMATRIX *Transform)
 {
 	//duplicate checker
 	std::map<STVtxData, WORD,CompNT>*dplChecker 
@@ -443,10 +443,11 @@ bool ASEData::CMesh::CreateVI_PNT(void **Getvtx, WORD &vtxcount, WORD **Indicies
 				dplChecker[vtxData[i].wPos].insert(std::make_pair(vtxData[i], MAXID));
 
 				//fill vertex slot			
-				CurVTXSlot->Pos = m_vecVertex[vtxData[i].wPos];
-				CurVTXSlot->Normal = vtxData[i].f3Normal.vt3();
+				CurVTXSlot->Pos = SMath::Transform(&m_vecVertex[vtxData[i].wPos], Transform);
+				D3DXVECTOR3 normal = vtxData[i].f3Normal.vt3();
+				CurVTXSlot->Normal = SMath::Transform(&normal, Transform);
 				CurVTXSlot->Tex = m_vecTex[vtxData[i].wTex];
-
+				
 				//next slot
 				++CurVTXSlot;
 				++vtxcount;
@@ -469,7 +470,7 @@ bool ASEData::CMesh::CreateVI_PNT(void **Getvtx, WORD &vtxcount, WORD **Indicies
 	delete[]dplChecker;
 	return true;
 }
-bool ASEData::CMesh::CreateVI_PT(void **Getvtx, WORD &vtxcount, WORD **Indicies) 
+bool ASEData::CMesh::CreateVI_PT(void **Getvtx, WORD &vtxcount, WORD **Indicies, const D3DXMATRIX *Transform)
 {
 	//duplicate checker
 	std::map<STVtxData, WORD,CompT>*dplChecker 
@@ -507,7 +508,7 @@ bool ASEData::CMesh::CreateVI_PT(void **Getvtx, WORD &vtxcount, WORD **Indicies)
 				dplChecker[vtxData[i].wPos].insert(std::make_pair(vtxData[i], MAXID));
 
 				//fill vertex slot			
-				CurVTXSlot->Pos = m_vecVertex[vtxData[i].wPos];			
+				CurVTXSlot->Pos = SMath::Transform(&m_vecVertex[vtxData[i].wPos], Transform);
 				CurVTXSlot->Tex = m_vecTex[vtxData[i].wTex];
 				++vtxcount;
 				++CurVTXSlot;
@@ -547,14 +548,14 @@ DWORD ASEData::CMesh::CheckFormat()
 }
 
 
-OBJ::CMesh* ASEData::CMesh::CreateMesh()
+OBJ::CMesh* ASEData::CMesh::CreateMesh(const D3DXMATRIX *Transform)
 {
 	WORD vtxcount = 0;
 	void *Vertexies;
 	WORD *Indicies;
 
 	//get verteies and indicies
-	if (!RecieveVTX_INDEX(&Vertexies, vtxcount, &Indicies))
+	if (!RecieveVTX_INDEX(&Vertexies, vtxcount, &Indicies,Transform))
 		return nullptr;
 
 

@@ -67,6 +67,8 @@ bool STFloat3::operator!=(const STFloat3 other)const
 {
 	return !(*this == other);
 }
+
+
 D3DXVECTOR3 STFloat3::vt3()const 
 {
 	return{f3[0],f3[1],f3[2]};
