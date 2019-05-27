@@ -10,12 +10,13 @@ const int g_WD_WIDTH = 800;
 const int g_WD_HEIGHT = 800;
 
 
-
-//D3D
+//Device type
 const D3DDEVTYPE g_DEVICETYPE = D3DDEVTYPE_HAL;
 
+//Deviece
 IDirect3DDevice9 * g_pDevice = NULL;
 
+//D3d Common Colors
 const D3DXCOLOR      g_WHITE=D3DCOLOR_XRGB(255, 255, 255);
 const D3DXCOLOR     g_BLACK=D3DCOLOR_XRGB(0, 0, 0);
 const D3DXCOLOR        g_RED=D3DCOLOR_XRGB(255, 0, 0);
@@ -25,11 +26,20 @@ const D3DXCOLOR     g_YELLOW=D3DCOLOR_XRGB(255, 255, 0);
 const D3DXCOLOR       g_CYAN=D3DCOLOR_XRGB(0, 255, 255);
 const D3DXCOLOR    g_MAGENTA=D3DCOLOR_XRGB(255, 0, 255);
 
-
-
-
+//Back Surface Color
 const D3DXCOLOR g_BACKCOLOR = g_BLUE;
 
+
+//System
+std::unique_ptr<CSystem> g_upSystem;
+
+std::unique_ptr<CDropMng> g_upDropMng;
+
+//Time Manager
+extern CTimeMng *g_pTimeMng = nullptr;
+
+
+//Common Value
 const D3DXMATRIX g_IDMATRIX =
 {
 	/*_11, _12, _13, _14*/ 1,0,0,0,
@@ -37,8 +47,3 @@ const D3DXMATRIX g_IDMATRIX =
 	/*_31, _32, _33, _34*/ 0,0,1,0,
 	/*_41, _42, _43, _44*/ 0,0,0,1,
 };
-
-//System
-std::unique_ptr<CSystem>g_upSystem;
-
-std::unique_ptr<CDropMng> g_upDropMng;

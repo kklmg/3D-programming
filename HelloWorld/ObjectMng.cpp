@@ -7,38 +7,6 @@
 #include"Trie.h"
 
 
-struct Vertex
-{
-	Vertex() {}
-	Vertex(D3DXVECTOR3 *pos, D3DXVECTOR3 *Normal, D3DXVECTOR2 *tex)
-	{
-		_pos = *pos;
-		_Normal = *Normal;
-		_Tex = *tex;
-	}
-	D3DXVECTOR3 _pos;
-	D3DXVECTOR3 _Normal;
-	D3DXVECTOR2 _Tex;
-	static const DWORD FVF;
-};
-const DWORD Vertex::FVF = D3DFVF_XYZ|D3DFVF_NORMAL|D3DFVF_TEX1;
-
-
-struct GridVertex
-{
-	float _x, _y, _z;
-	DWORD _color;
-
-	GridVertex()
-	{
-		_x = 0.0f;
-		_y = 0.0f;
-		_z = 0.0f;
-		_color = 0xffffffff;
-	}
-};
-
-#define FVF_GRID_VERTEX (D3DFVF_XYZ | D3DFVF_DIFFUSE)
 
 void ComputeNormal(D3DXVECTOR3 *out, D3DXVECTOR3 *v1, D3DXVECTOR3 *v2, D3DXVECTOR3 *v3) 
 {
@@ -65,12 +33,7 @@ D3DLIGHT9 d3dLight;
 D3DXVECTOR3 dir(0.0f, -1.0f, -0.25f);
 
 
-
-
-
-
 CObject obj00;
-
 
 CObjectMng::CObjectMng(IDirect3DDevice9*const Device)
 	:m_rpDevice(Device)
@@ -134,14 +97,14 @@ void CObjectMng::CreateObject()
 	// Set Camera.
 	//-----------------------------------------------------------------------------
 
-	D3DXVECTOR3 position(0.0f, 250.0f, -50.0f);
+	D3DXVECTOR3 position(0.0f, 250.0f, -300.0f);
 	D3DXVECTOR3 target(0.0f, 0.0f, 0.0f);
 	D3DXVECTOR3 up(0.0f, 1.0f, 0.0f);
 	D3DXMATRIX V;
 	D3DXMatrixLookAtLH(&V, &position, &target, &up);
 
 	m_rpDevice->SetTransform(D3DTS_VIEW, &V);
-
+	
 	//-----------------------------------------------------------------------------
 	// Set the projection matrix.
 	//-----------------------------------------------------------------------------
@@ -195,10 +158,6 @@ void CObjectMng::DrawObject()
 
 	D3DXMatrixRotationY(&Ry, y);
 	D3DXMatrixRotationX(&Rx, x);
-	
-	
-
-
 	
 	if (y >= 6.28f)
 		y = 0.0f;

@@ -1,6 +1,8 @@
 #pragma once
 #include"D3DClass.h"
 #include"ObjectMng.h"
+#include"FpsMng.h"
+
 
 class CGraphicsMng
 {
@@ -11,6 +13,8 @@ public:
 	bool Init();
 
 	bool Frame();
+
+	CFpsMng* m_refFps;
 
 private:
 	bool Render();

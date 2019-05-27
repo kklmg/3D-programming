@@ -1,7 +1,59 @@
-﻿  Object.cpp
+﻿  ObjCom.cpp
+c:\users\liming\documents\visual studio 2015\projects\helloworld\helloworld\objcom.cpp(73): warning C4800: 'HRESULT': forcing value to bool 'true' or 'false' (performance warning)
+c:\users\liming\documents\visual studio 2015\projects\helloworld\helloworld\objcom.cpp(88): warning C4800: 'HRESULT': forcing value to bool 'true' or 'false' (performance warning)
+c:\users\liming\documents\visual studio 2015\projects\helloworld\helloworld\objcom.cpp(145): warning C4018: '<': signed/unsigned mismatch
+c:\users\liming\documents\visual studio 2015\projects\helloworld\helloworld\objcom.cpp(156): warning C4800: 'HRESULT': forcing value to bool 'true' or 'false' (performance warning)
+  Generating Code...
+  Compiling...
+  Vertex.cpp
 c:\users\liming\documents\visual studio 2015\projects\helloworld\helloworld\trie.h(113): warning C4812: obsolete declaration style: please use 'STrie::Trie_Table<Value>::Trie_Table' instead
 c:\users\liming\documents\visual studio 2015\projects\helloworld\helloworld\trie.h(126): warning C4812: obsolete declaration style: please use 'STrie::Trie_Table<Value>::~Trie_Table' instead
-c:\users\liming\documents\visual studio 2015\projects\helloworld\helloworld\asedata.h(357): warning C4018: '<': signed/unsigned mismatch
-c:\users\liming\documents\visual studio 2015\projects\helloworld\helloworld\object.cpp(29): warning C4267: 'initializing': conversion from 'size_t' to 'WORD', possible loss of data
+c:\users\liming\documents\visual studio 2015\projects\helloworld\helloworld\asedata.h(401): warning C4018: '<': signed/unsigned mismatch
+  ObjectMng.cpp
+c:\users\liming\documents\visual studio 2015\projects\helloworld\helloworld\trie.h(113): warning C4812: obsolete declaration style: please use 'STrie::Trie_Table<Value>::Trie_Table' instead
+c:\users\liming\documents\visual studio 2015\projects\helloworld\helloworld\trie.h(126): warning C4812: obsolete declaration style: please use 'STrie::Trie_Table<Value>::~Trie_Table' instead
+c:\users\liming\documents\visual studio 2015\projects\helloworld\helloworld\asedata.h(401): warning C4018: '<': signed/unsigned mismatch
+  Object.cpp
+c:\users\liming\documents\visual studio 2015\projects\helloworld\helloworld\trie.h(113): warning C4812: obsolete declaration style: please use 'STrie::Trie_Table<Value>::Trie_Table' instead
+c:\users\liming\documents\visual studio 2015\projects\helloworld\helloworld\trie.h(126): warning C4812: obsolete declaration style: please use 'STrie::Trie_Table<Value>::~Trie_Table' instead
+c:\users\liming\documents\visual studio 2015\projects\helloworld\helloworld\asedata.h(401): warning C4018: '<': signed/unsigned mismatch
+c:\users\liming\documents\visual studio 2015\projects\helloworld\helloworld\object.cpp(30): warning C4267: 'initializing': conversion from 'size_t' to 'WORD', possible loss of data
+  ObjNode.cpp
+  ObjAni.cpp
+c:\users\liming\documents\visual studio 2015\projects\helloworld\helloworld\objani.cpp(45): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+c:\users\liming\documents\visual studio 2015\projects\helloworld\helloworld\objani.cpp(90): warning C4267: '=': conversion from 'size_t' to 'WORD', possible loss of data
+c:\users\liming\documents\visual studio 2015\projects\helloworld\helloworld\objani.cpp(96): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+  Asedata.cpp
+c:\users\liming\documents\visual studio 2015\projects\helloworld\helloworld\trie.h(113): warning C4812: obsolete declaration style: please use 'STrie::Trie_Table<Value>::Trie_Table' instead
+c:\users\liming\documents\visual studio 2015\projects\helloworld\helloworld\trie.h(126): warning C4812: obsolete declaration style: please use 'STrie::Trie_Table<Value>::~Trie_Table' instead
+c:\users\liming\documents\visual studio 2015\projects\helloworld\helloworld\asedata.h(401): warning C4018: '<': signed/unsigned mismatch
+c:\users\liming\documents\visual studio 2015\projects\helloworld\helloworld\asedata.cpp(176): warning C4018: '<': signed/unsigned mismatch
+c:\users\liming\documents\visual studio 2015\projects\helloworld\helloworld\asedata.cpp(217): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+c:\users\liming\documents\visual studio 2015\projects\helloworld\helloworld\asedata.cpp(238): warning C4267: 'initializing': conversion from 'size_t' to 'WORD', possible loss of data
+  ASEObj.cpp
+c:\users\liming\documents\visual studio 2015\projects\helloworld\helloworld\trie.h(113): warning C4812: obsolete declaration style: please use 'STrie::Trie_Table<Value>::Trie_Table' instead
+c:\users\liming\documents\visual studio 2015\projects\helloworld\helloworld\trie.h(126): warning C4812: obsolete declaration style: please use 'STrie::Trie_Table<Value>::~Trie_Table' instead
+c:\users\liming\documents\visual studio 2015\projects\helloworld\helloworld\asedata.h(401): warning C4018: '<': signed/unsigned mismatch
+c:\users\liming\documents\visual studio 2015\projects\helloworld\helloworld\aseobj.cpp(392): warning C4267: 'initializing': conversion from 'size_t' to 'WORD', possible loss of data
+c:\users\liming\documents\visual studio 2015\projects\helloworld\helloworld\aseobj.cpp(393): warning C4267: 'initializing': conversion from 'size_t' to 'WORD', possible loss of data
+c:\users\liming\documents\visual studio 2015\projects\helloworld\helloworld\aseobj.cpp(394): warning C4267: 'initializing': conversion from 'size_t' to 'WORD', possible loss of data
+c:\users\liming\documents\visual studio 2015\projects\helloworld\helloworld\aseobj.cpp(409): warning C4800: 'WORD': forcing value to bool 'true' or 'false' (performance warning)
+c:\users\liming\documents\visual studio 2015\projects\helloworld\helloworld\aseobj.cpp(410): warning C4800: 'WORD': forcing value to bool 'true' or 'false' (performance warning)
+c:\users\liming\documents\visual studio 2015\projects\helloworld\helloworld\aseobj.cpp(411): warning C4800: 'WORD': forcing value to bool 'true' or 'false' (performance warning)
+  ASEMesh.cpp
+c:\users\liming\documents\visual studio 2015\projects\helloworld\helloworld\trie.h(113): warning C4812: obsolete declaration style: please use 'STrie::Trie_Table<Value>::Trie_Table' instead
+c:\users\liming\documents\visual studio 2015\projects\helloworld\helloworld\trie.h(126): warning C4812: obsolete declaration style: please use 'STrie::Trie_Table<Value>::~Trie_Table' instead
+c:\users\liming\documents\visual studio 2015\projects\helloworld\helloworld\asedata.h(401): warning C4018: '<': signed/unsigned mismatch
+c:\users\liming\documents\visual studio 2015\projects\helloworld\helloworld\asemesh.cpp(147): warning C4244: '=': conversion from 'DWORD' to 'WORD', possible loss of data
+c:\users\liming\documents\visual studio 2015\projects\helloworld\helloworld\asemesh.cpp(151): warning C4244: '=': conversion from 'DWORD' to 'WORD', possible loss of data
+c:\users\liming\documents\visual studio 2015\projects\helloworld\helloworld\asemesh.cpp(155): warning C4244: '=': conversion from 'DWORD' to 'WORD', possible loss of data
+c:\users\liming\documents\visual studio 2015\projects\helloworld\helloworld\asemesh.cpp(571): warning C4267: 'initializing': conversion from 'size_t' to 'WORD', possible loss of data
+c:\users\liming\documents\visual studio 2015\projects\helloworld\helloworld\asemesh.cpp(577): warning C4244: '=': conversion from 'DWORD' to 'WORD', possible loss of data
+c:\users\liming\documents\visual studio 2015\projects\helloworld\helloworld\asemesh.cpp(578): warning C4244: '=': conversion from 'DWORD' to 'WORD', possible loss of data
+  Generating Code...
+c:\users\liming\documents\visual studio 2015\projects\helloworld\helloworld\asemesh.cpp(305): warning C4715: 'ASEData::CMesh::RecieveVTX_INDEX': not all control paths return a value
+c:\users\liming\documents\visual studio 2015\projects\helloworld\helloworld\objani.cpp(164): warning C4715: 'OBJ::CObjAni::NewPos': not all control paths return a value
+c:\users\liming\documents\visual studio 2015\projects\helloworld\helloworld\objani.cpp(196): warning C4715: 'OBJ::CObjAni::NewScale': not all control paths return a value
+c:\users\liming\documents\visual studio 2015\projects\helloworld\helloworld\objani.cpp(179): warning C4715: 'OBJ::CObjAni::NewRot': not all control paths return a value
   HelloWorld.vcxproj -> C:\Users\LiMing\Documents\Visual Studio 2015\Projects\HelloWorld\Debug\HelloWorld.exe
   HelloWorld.vcxproj -> C:\Users\LiMing\Documents\Visual Studio 2015\Projects\HelloWorld\Debug\HelloWorld.pdb (Full PDB)

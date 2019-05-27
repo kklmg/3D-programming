@@ -82,6 +82,18 @@
     <Filter Include="Transform">
       <UniqueIdentifier>{46791012-9b00-4db5-95b3-2079ea50f842}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Time">
+      <UniqueIdentifier>{50098384-ad4c-4ebe-9bd1-af027f3ecfd8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Other">
+      <UniqueIdentifier>{fbb983c1-0a91-4b7a-b56c-ad80dfae57f8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Other\Removed">
+      <UniqueIdentifier>{b90e93d0-dd8f-4ed9-a8e2-ac0d9ca93b91}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Other\Backup">
+      <UniqueIdentifier>{bb9840a8-8d19-47a3-9592-5d513cd30352}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -174,6 +186,15 @@
     <ClInclude Include="MyMath.h">
       <Filter>Transform</Filter>
     </ClInclude>
+    <ClInclude Include="TimeMng.h">
+      <Filter>Time</Filter>
+    </ClInclude>
+    <ClInclude Include="Timer.h">
+      <Filter>Time</Filter>
+    </ClInclude>
+    <ClInclude Include="FpsMng.h">
+      <Filter>Time</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Global.cpp">
@@ -192,9 +213,6 @@
       <Filter>Graphics</Filter>
     </ClCompile>
     <ClCompile Include="ObjectMng.cpp">
-      <Filter>GameMng</Filter>
-    </ClCompile>
-    <ClCompile Include="TimeMng.cpp">
       <Filter>GameMng</Filter>
     </ClCompile>
     <ClCompile Include="Mylexer.cpp">
@@ -247,6 +265,24 @@
     </ClCompile>
     <ClCompile Include="MyMath.cpp">
       <Filter>Transform</Filter>
+    </ClCompile>
+    <ClCompile Include="TimeMng.cpp">
+      <Filter>Time</Filter>
+    </ClCompile>
+    <ClCompile Include="Timer.cpp">
+      <Filter>Time</Filter>
+    </ClCompile>
+    <ClCompile Include="ObjAni.cpp">
+      <Filter>Object\Component</Filter>
+    </ClCompile>
+    <ClCompile Include="Removed.cpp">
+      <Filter>Other\Removed</Filter>
+    </ClCompile>
+    <ClCompile Include="ObjNode.cpp">
+      <Filter>Object\Component</Filter>
+    </ClCompile>
+    <ClCompile Include="FpsMng.cpp">
+      <Filter>Time</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

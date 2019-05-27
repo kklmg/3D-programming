@@ -1,12 +1,13 @@
 #include"stdafx.h"
 #include"Global.h"
+#include"Timer.h"
 #include"ObjCom.h"
 #include"Asedata.h"
 #include"Object.h"
-#include<time.h>
 
 
-CObject::CObject():m_mtxWorld(g_IDMATRIX)
+
+CObject::CObject()
 {
 }
 
@@ -54,22 +55,27 @@ bool CObject::Init(ASEData::CASEData& asedata)
 	
 	for (auto ptr : asedata.m_vecGemoObj)
 	{
+		//create mesh
 		newObj = ptr->CreateGemoObj();
 
+		//create animation
+		newObj->SetAni(ptr->CreateAni(asedata.GetSceneData()));
+		
 		//set root
-		if (asedata.m_InheritData.IsRoot(newObj->m_strNodeName))
+		if (asedata.m_InheritData.IsRoot(newObj->GetNodeName()))
 		{
 			m_vecRoot.push_back(newObj);
 		}
 
 		//insert data
-		m_mapObjs[newObj->m_strNodeName] = newObj;
+		m_mapObjs[newObj->GetNodeName()] = newObj;
 	}
 
 	
 	//find and set children
+	//---------------------------------------------------------
 	std::list<std::string>*Childlist;
-
+	OBJ::CObjNode* child;
 
 	for (auto Iter : m_mapObjs)
 	{
@@ -78,31 +84,51 @@ bool CObject::Init(ASEData::CASEData& asedata)
 		{
 			for (auto ListIter : *Childlist) 
 			{
-				Iter.second->SetChildren(m_mapObjs.find(ListIter)->second);	
+				child = m_mapObjs.find(ListIter)->second;
+
+				//set child
+				Iter.second->SetChildren(child);
+
+				//set parent
+				child->SetParent(Iter.second);
+
 			}
 		}
 	}
 
-	m_vecRoot[0]->InitLocal();
-
-
+	//Init Local Matrix
+	for (auto ptr : m_vecRoot) 
+	{
+		ptr->InitLocal();
+	}
+	
 	return true;
 }
 
 void CObject::SetTransform(D3DXMATRIX* TM) 
 {
-	if(TM)
-	m_mtxWorld = *TM;
-
+	if (TM)
+	{
+		for (auto ptr : m_vecRoot) 
+		{
+			ptr->SetRootTM(*TM);
+		}
+	}
 }
-
 
 bool CObject::Draw()
 {
 	for (auto ptr : m_vecRoot)
 	{
-		ptr->DrawAll(m_vecMat,&m_mtxWorld);
+		ptr->update();
+		ptr->DrawAll(m_vecMat);
 	}
+	return true;
+}
+
+bool CObject::PlayAnimation(WORD AniID) 
+{
+	
 
 	return true;
 }

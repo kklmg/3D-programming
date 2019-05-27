@@ -41,13 +41,18 @@ namespace ASEData
 	//------------------------------------------------------------------
 	struct STScene
 	{
-		DWORD m_dwFirstFrame;
-		DWORD m_dwLastFrame;
-		DWORD m_dwFrameSpeed;
-		DWORD m_dwTicksPerFrame;
+		WORD m_wFirstFrame;
+		WORD m_wLastFrame;
+		WORD m_wFrameSpeed;
+		WORD m_wTicksPerFrame;
 
 		D3DXVECTOR3 m_vt3BACKGROUND_STATIC;
 		D3DXVECTOR3 m_vt3AMBIENT_STATIC;
+
+		WORD GetTPS() const
+		{
+			return m_wFrameSpeed*m_wTicksPerFrame;
+		}
 
 		bool parse(CMYLexer *lexer);
 	};
@@ -138,34 +143,6 @@ namespace ASEData
 	//-----------------------------------------------------------------
 	//Animation Data
 	//-----------------------------------------------------------------
-	struct STPosCAniTrack
-	{
-		float Time;
-		D3DXVECTOR3 Pos;
-	};
-
-	struct STRotCAniTrack
-	{
-		float Time;
-		D3DXVECTOR3 RotAxis;
-		float RotAng;
-	};
-
-	struct STScaleCAniTrack
-	{
-		float Time;
-		D3DXVECTOR3 Scale;
-		D3DXVECTOR3 ScaleAxis;
-		float Angle;
-	};
-
-	struct STAniTMData
-	{
-		std::vector<STPosCAniTrack*> m_vecPos;
-		std::vector<STRotCAniTrack*> m_vecrot;
-		std::vector<STScaleCAniTrack*> m_vecScaleCAniTrack;
-	};
-
 	struct STMeshBlendWeight
 	{
 		DWORD BoneID;
@@ -288,18 +265,86 @@ namespace ASEData
 		//char**m_ppBoneNameList;
 	};
 
+
+	//-----------------------------------------------------------------
+	//Animation Data
+	//-----------------------------------------------------------------
+	struct STTrackPos
+	{
+		STTrackPos();
+		D3DXMATRIX* CreateMtx(D3DXMATRIX& Receive);
+
+		DWORD dwTick;
+		D3DXVECTOR3 vt3Pos;
+	};
+
+	struct STTrackRot
+	{
+		STTrackRot();
+		D3DXMATRIX* CreateMtx(D3DXMATRIX& Receive);
+		D3DXQUATERNION* CreateQuaternion(D3DXQUATERNION& Receive);
+
+		DWORD dwTick;
+		D3DXVECTOR3 vt3RotAxis;
+		float fRotAng;
+	};
+
+	struct STTrackScale
+	{
+		STTrackScale();
+		D3DXMATRIX* CreateMtx(D3DXMATRIX& Receive);
+		D3DXQUATERNION* CreateQuaternion(D3DXQUATERNION& Receive);
+
+		DWORD dwTick;
+		D3DXVECTOR3 vt3Scale;
+		D3DXVECTOR3 vt3ScaleAxis;
+		float fAngle;
+	};
+
+	class CAniData
+	{
+	public:
+		CAniData();
+		~CAniData();
+	
+		void Parse(CMYLexer *lexer);
+
+		OBJ::CObjAni* CreateAni(STScene* Data);
+		
+	private:
+		void __ParsePos(CMYLexer *lexer);
+		void __ParseRot(CMYLexer *lexer);
+		void __ParseScale(CMYLexer *lexer);
+		
+	private:
+		std::list<STTrackPos*> m_listPos;
+		std::list<STTrackRot*> m_listRot;
+		std::list<STTrackScale*> m_listScale;	
+	};
+
+
+
+
+
 	struct STObject
 	{
+	public:
+		STObject();
+		
 		std::string m_strNodeName;
 		std::string m_strNodeParent;
 
+		OBJ::CObjAni* CreateAni(STScene* Data);
+
 		STNodeTM m_NodeTM;
-		STAniTMData m_AniTM;
+		CAniData m_AniData;
 	};
 
 	struct STGEOMObject :public STObject
 	{
 		STGEOMObject();
+
+		void Parse(CMYLexer *lexer);
 
 		OBJ::CGemoObj* CreateGemoObj();
 
@@ -341,7 +386,6 @@ namespace ASEData
 	};
 
 
-
 	class CASEData
 	{
 	public:
@@ -362,15 +406,11 @@ namespace ASEData
 			return true;
 		}
 
-
-		OBJ::CObjNode* CreateObj()
+		STScene* GetSceneData()
 		{
-			OBJ::CObjNode* newobj = new OBJ::CObjNode;
-
-
-			return newobj;
+			return &m_SceneInfo;
 		}
-		
+
 	private:
 		bool ParseMaterial();
 

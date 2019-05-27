@@ -1,6 +1,6 @@
 #pragma once
 #include "GraphicsMng.h"
-
+#include "FpsMng.h"
 class CSystem
 {
 public:
@@ -8,15 +8,19 @@ public:
 	~CSystem();
 
 	bool Init(HINSTANCE hInstance, int nCmdShow);
-	int Run();
+	int  Run();
 	void ShutDown();
 
+	void SetFps(WORD fixfps);
 private:
 	bool InitWindow(int nCmdShow);
 	bool InitGraphics();
 	bool InitOther();
+	bool InitTimeMng();
+	bool InitFpsMng();
 
 private:
+	CFpsMng *m_pFpsMng;
 	CGraphicsMng *m_pGrapMng;
 };
 

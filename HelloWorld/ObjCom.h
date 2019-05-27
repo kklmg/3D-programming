@@ -1,6 +1,5 @@
 #pragma once
-//#include"Asedata.h"
-//#include"Vertex.h"
+#include"Timer.h"
 
 namespace OBJ 
 {
@@ -31,7 +30,7 @@ namespace OBJ
 	
 		void AddFaceMat(STFaceMat& face);
 
-		std::vector<STFaceMat>& GetFaceMatVec();
+	
 		bool InitIBuffer(void* ptr);
 
 		bool LockIDB(void** Address);
@@ -44,7 +43,7 @@ namespace OBJ
 		bool DrawEX(std::vector<STMaterial*>&mat);
 		bool DrawFace(WORD Index);
 		
-
+		std::vector<STFaceMat>& GetFaceMatVec();
 	protected:	
 		DWORD m_dwFVF;
 		DWORD m_dwVTXSize;
@@ -57,64 +56,133 @@ namespace OBJ
 		std::vector<STFaceMat> m_vecFaceMat;
 	};
 
+	struct STAniTrack
+	{
+		STAniTrack();
+		~STAniTrack();
+
+		DWORD dwTick;
+
+		double dKeyTime;			//key
+
+		D3DXVECTOR3 *pVt3Pos;		//position
+
+		D3DXQUATERNION *pQuatRot;	//rotation
+
+		D3DXVECTOR3 *pVt3Scale;		//Scale
+		D3DXQUATERNION *pQuatScaleRot;	//scale Axis
+	};
+
+	class CObjAni
+	{
+	public:
+
+		CObjAni();
+		~CObjAni();
+
+		void Update();
+		D3DXMATRIX GetAniMatrix(D3DXMATRIX LocalTM);
+
+		bool __Lerp(D3DXMATRIX &pos, D3DXMATRIX&rot, D3DXMATRIX&scale);
+
+		bool NewPos(WORD key, double time, D3DXVECTOR3 pos);
+		bool NewRot(WORD key, double time, D3DXQUATERNION rot);
+		bool NewScale(WORD key, double time, D3DXVECTOR3 scale, D3DXQUATERNION rot);
+
+		void ComputeAbsPos();
+		void ComputeAbsRot();
+
+	
+
+		double m_dLastTime;
+
+		CTimer m_Timer;
+
+		bool m_bPosTrack;
+		bool m_bRotTrack;
+		bool m_bScaleTrack;
+
+		WORD m_wCurKey;
+		WORD m_wMaxKey;
+
+		std::vector<STAniTrack*> m_vecTrack;
+
+	};
+
 	class CObjNode
 	{
 	public:
-		CObjNode():m_pParent(nullptr) {}
-		virtual ~CObjNode(){}
-
-		//virtual Draw();
-		std::string m_strNodeName;
-		std::string m_strParentName;
-
-		D3DXMATRIX m_mtxAseWorld;
-
-		D3DXMATRIX m_mtxLocal;
-		D3DXMATRIX m_mtxWorld;
-
-		D3DXMATRIX m_mtxScale;
-		D3DXMATRIX m_mtxTranslate;
-		D3DXMATRIX m_mtxRotate;
+		//Basic 
+		//------------------------------------------------------------
+		CObjNode();
+		virtual ~CObjNode();
 
 
-		void update() 
-		{
-			if (m_pParent)
-			{
-				//m_mtxWorld = m_mtxLocal*m_pParent->m_mtxWorld;
-			}
-			else
-			{
+		//Animation
+		//------------------------------------------------------------
+	public:
+		void SetAni(CObjAni*ani);			//Set Animation 
 
-			}
-		
-		
+	private:
+		CObjAni *m_pAni;					//Animation Data
 
+		//Update Node
+		//--------------------------------------------------------------
+	public:
+		void update();
+	private:
+		void __updateHelper(CObjNode*node);
 
-		}
+		//Draw Node
+		//--------------------------------------------------------------
+	public:
+		virtual bool Draw(std::vector<STMaterial*>&mat) = 0;
 
-		void SetChildren(CObjNode* child)
-		{
-			if(child)
-			m_vecChildren.push_back(child);
-		}
-		virtual bool Draw(std::vector<STMaterial*>&mat)
-		{
-			return true;
-		}
-		virtual bool DrawAll(std::vector<STMaterial*>&mat, const D3DXMATRIX* World = nullptr);
+		virtual bool DrawAll(std::vector<STMaterial*>&mat);
+
+	private:
+		void __DrawHelper(CObjNode*node,std::vector<STMaterial*>&mat);
+
+	
+		//Set Hierarchic structure
+		//--------------------------------------------------------------
+	public:
+		void SetParent(CObjNode* Parent);
+		void SetChildren(CObjNode* child);
 
 		void InitLocal();
 
+		D3DXMATRIX GetParWorld() const;		//GetParent World Transformed Matrix
 	private:
-		void __InitLocalHelper(CObjNode*node, const D3DXMATRIX *parLocalTM);
-		void __DrawHelper(CObjNode*node, const D3DXMATRIX *ParWorldTM, std::vector<STMaterial*>&mat);
+		void __InitLocalHelper(CObjNode*node);
+
+	private:
+		CObjNode* m_pParent;					//parent node
+		std::vector<CObjNode*>m_vecChildren;	//childeren nodes
+
+
+		//Basic 
+		//--------------------------------------------------------------
+	public:
+		std::string GetNodeName() const;
+		void SetNodeName(std::string& str);
+		void SetParNodeName(std::string& str);
+
+		void SetOriginalTM(D3DXMATRIX TM);
+		void SetWorldTM(D3DXMATRIX TM); 
+		void SetRootTM(D3DXMATRIX TM);
+
+	private:
 		
 
-		CObjNode* m_pParent;
+		std::string m_strNodeName;			//Node Name
+		std::string m_strParentName;		//Parent Node Name
 
-		std::vector<CObjNode*>m_vecChildren;
-	
+
+		D3DXMATRIX m_TMRoot;		
+		D3DXMATRIX m_TMLocal;				//Transform Matrix:     Local 
+		D3DXMATRIX m_TMOrign;				//Transform Matrix:     Original world 
+		D3DXMATRIX m_TMWorld;				//Transform Matrix:     Real World Transform Matrix
 	};
 
 	class CGemoObj: public CObjNode
@@ -132,7 +200,4 @@ namespace OBJ
 		CMesh* m_pMesh;
 		WORD m_wMatId;
 	};
-
-
-
 }

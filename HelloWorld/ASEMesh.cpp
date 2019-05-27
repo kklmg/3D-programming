@@ -1,7 +1,7 @@
 #include"stdafx.h"
 #include"TokenDefine.h"
 #include"Vertex.h"
-
+#include"ObjCom.h"
 #include"Asedata.h"
 #include"MyMath.h"
 
@@ -381,9 +381,9 @@ bool ASEData::CMesh::CreateVI_PN(void **Getvtx, WORD &vtxcount, WORD **Indicies,
 
 				//fill vertex slot			
 				CurVTXSlot->Pos = SMath::Transform(&m_vecVertex[vtxData[i].wPos], Transform);
-				D3DXVECTOR3 normal = vtxData[i].f3Normal.vt3();
-				CurVTXSlot->Normal = SMath::Transform(&normal, Transform);
-
+				/*D3DXVECTOR3 normal = vtxData[i].f3Normal.vt3();
+				CurVTXSlot->Normal = SMath::Transform(&normal, Transform);*/
+				CurVTXSlot->Normal = vtxData[i].f3Normal.vt3();
 				++vtxcount;
 				++CurVTXSlot;
 

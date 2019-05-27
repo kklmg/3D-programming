@@ -9,14 +9,13 @@ public:
 	bool Init(std::string str);
 	bool Init(ASEData::CASEData& asedata);
 	
+	bool PlayAnimation(WORD AniID);
+
 	bool Draw();
 	
 	void SetTransform(D3DXMATRIX* TM);
 
-	
-
 private:
-	D3DXMATRIX m_mtxWorld;
 
 	std::vector<CObject*>m_pParent;
 	std::vector<CObject*>m_vecChild;
@@ -27,4 +26,6 @@ private:
 	std::map <std::string, OBJ::CObjNode*>m_mapObjs;
 
 	std::vector<OBJ::CObjNode*>m_vecRoot;
+
+	friend class OBJ::CObjNode;
 };

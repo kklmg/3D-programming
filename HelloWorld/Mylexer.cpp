@@ -221,6 +221,8 @@ bool CMYLexer::FindToken(int FindToken1, int FindToken2)
 	return FALSE;
 }
 
+
+
 bool CMYLexer::FindToken_Until(int FindToken, int stop)
 {
 	do

@@ -8,7 +8,8 @@
 
 
 CSystem::CSystem():
-	m_pGrapMng(nullptr)
+	m_pGrapMng(nullptr),
+	m_pFpsMng(nullptr)
 {
 }
 
@@ -37,6 +38,25 @@ bool CSystem::Init(HINSTANCE hInstance, int nCmdShow)
 		return false;
 	}
 
+	//Init FPS Manager
+	if (!(InitFpsMng()))
+	{
+		::MessageBox(0, L"InitFpsMng() - FAILED", 0, 0);
+		ShutDown();
+		return false;
+	}	
+	m_pGrapMng->m_refFps = m_pFpsMng;
+	m_pFpsMng->FixFps(60);
+
+	//Init Time Manager
+	if (!InitTimeMng())
+	{
+		::MessageBox(0, L"InitTimeMng() - FAILED", 0, 0);
+		ShutDown();
+		return false;
+	}
+
+
 	//Init Global
 	if (!InitOther())
 	{
@@ -44,6 +64,10 @@ bool CSystem::Init(HINSTANCE hInstance, int nCmdShow)
 		ShutDown();
 		return false;
 	}
+
+
+	
+	SetFps(60);
 
 	return true;
 }
@@ -119,6 +143,26 @@ bool CSystem::InitOther()
 	return true;
 }
 
+bool CSystem::InitFpsMng() 
+{
+	m_pFpsMng = new CFpsMng;	
+	return m_pFpsMng->Init();
+}
+
+bool CSystem::InitTimeMng() 
+{
+	g_pTimeMng = new CTimeMng;
+	g_pTimeMng->Init();
+	return true;
+}
+
+void CSystem::SetFps(WORD fixfps) 
+{
+	if (m_pFpsMng) 	
+		m_pFpsMng->FixFps(fixfps);
+}
+
+
 int CSystem::Run()
 {
 	MSG msg;
@@ -132,6 +176,9 @@ int CSystem::Run()
 	// Main message loop:
 	while (msg.message != WM_QUIT)
 	{
+		m_pFpsMng->Update();
+		g_pTimeMng->Update();
+
 		if (::PeekMessage(&msg, 0, 0, 0, PM_REMOVE))
 		{
 			::TranslateMessage(&msg);
@@ -146,15 +193,14 @@ int CSystem::Run()
 			TranslateMessage(&msg);
 			DispatchMessage(&msg);
 		}*/
-		
-			float currTime = (float)timeGetTime();
-			float timeDelta = (currTime - lastTime)*0.001f;
 
-			lastTime = currTime;
+		//Time update
+	
 
-			m_pGrapMng->Frame();
+		//Main Frame
 		
 
+		m_pGrapMng->Frame();
 	}
 	return (int)msg.wParam;
 
@@ -163,11 +209,12 @@ int CSystem::Run()
 void CSystem::ShutDown()
 {
 	SAFE_DELETE(m_pGrapMng);
+	SAFE_DELETE(m_pFpsMng);
+	SAFE_DELETE(g_pTimeMng);	
 }
 
 
 //call back fun
-
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
 	switch (message)

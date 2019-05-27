@@ -3,6 +3,7 @@
 #include"Vertex.h"
 #include<unordered_set>
 #include<algorithm>
+
 #include"Asedata.h"
 
 
@@ -269,16 +270,16 @@ bool STScene::parse(CMYLexer *lexer)
 		switch (CMYLexer::s_CurToken_Dw)
 		{
 		case TOKENR_SCENE_FIRSTFRAME:
-			lexer->GetDWORD(m_dwFirstFrame); break;
+			lexer->GetWORD(m_wFirstFrame); break;
 
 		case TOKENR_SCENE_LASTFRAME:
-			lexer->GetDWORD(m_dwLastFrame); break;
+			lexer->GetWORD(m_wLastFrame); break;
 
 		case TOKENR_SCENE_FRAMESPEED:
-			lexer->GetDWORD(m_dwFrameSpeed); break;
+			lexer->GetWORD(m_wFrameSpeed); break;
 
 		case TOKENR_SCENE_TICKSPERFRAME:
-			lexer->GetDWORD(m_dwTicksPerFrame); break;
+			lexer->GetWORD(m_wTicksPerFrame); break;
 
 		case TOKENR_SCENE_BACKGROUND_STATIC:
 		{
@@ -396,8 +397,6 @@ bool CASEData::ParsingAll(LPCSTR FileName)
 
 	SAFE_DELETE(m_plexer);
 
-
-
 	return true;
 }
 
@@ -408,31 +407,8 @@ void CASEData::ParseGemoObject()
 {
 	STGEOMObject*GeoObj = new STGEOMObject;
 
-	std::unordered_set<DWORD> Memo;
-	Memo.insert(TOKENR_NODE_NAME);
-	Memo.insert(TOKENR_NODE_PARENT);
-	Memo.insert(TOKENR_MATERIAL_REF);
-	Memo.insert(TOKENR_NODE_TM);
-	Memo.insert(TOKENR_TM_ANIMATION);
-	Memo.insert(TOKENR_MESH);
-	Memo.insert(TOKEND_BLOCK_START);
+	GeoObj->Parse(m_plexer);
 
-
-	m_plexer->MovetoBlockStart();
-
-	while (m_plexer->FindToken_UseTable_Until(TOKEND_BLOCK_END,Memo))
-	{
-		switch (CMYLexer::s_CurToken_Dw)
-		{
-		case TOKENR_NODE_NAME:		m_plexer->GetString(GeoObj->m_strNodeName); break;
-		case TOKENR_NODE_PARENT:	m_plexer->GetString(GeoObj->m_strNodeParent); break;
-		case TOKENR_MATERIAL_REF:	m_plexer->GetWORD(GeoObj->m_wMatRef);  break;
-		case TOKENR_NODE_TM:		GeoObj->m_NodeTM.parse(m_plexer); break;
-		//case TOKENR_TM_ANIMATION:	LoadAnimationTM(&GeoObj->AniTM); break;
-		case TOKENR_MESH:			GeoObj->m_Mesh.ParseAll(m_plexer); break;
-		case TOKEND_BLOCK_START:	m_plexer->SkipCurBlock(); break;
-		}
-	}
 	m_vecGemoObj.push_back(GeoObj);
 
 	//create inheritTable

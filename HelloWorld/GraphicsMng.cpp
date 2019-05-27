@@ -39,6 +39,7 @@ bool CGraphicsMng::Render()
 {
 	m_pD3D->BeginScene();
 
+	m_refFps->DrawFps();
 	
 	m_pObjMng->DrawObject();
 

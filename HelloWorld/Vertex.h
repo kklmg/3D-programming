@@ -49,14 +49,15 @@ struct STVTX_PT
 	static const DWORD FVF;
 };
 
-struct STVTX_Pos
+struct STVTX_GRID
 {
+	STVTX_GRID();
 
+	float _x, _y, _z;
+	DWORD _color;
+
+	static const DWORD FVF;
 };
-
-
-
-
 
 
 
