@@ -55,11 +55,15 @@ void CObjectMng::CreateObject()
 {
 	HRESULT hr = 0;
 
-	
+	//obj00.Init("ASEFile/03IK-Joe.ASE");
 
-	obj00.Init("ASEFile/03IK-Joe.ASE");
-	//obj00.Init("ASEFile/Dragon2.ASE");
 
+	obj00.Init("ASEFile/Dragon2.ASE");
+
+
+
+
+	//obj00.Init("ASEFile/ayane/ayane.ASE");
 	
 
 	//obj00.Init("ASEFile/MaterialBox.ASE");
@@ -97,13 +101,13 @@ void CObjectMng::CreateObject()
 	// Set Camera.
 	//-----------------------------------------------------------------------------
 
-	D3DXVECTOR3 position(0.0f, 250.0f, -300.0f);
-	D3DXVECTOR3 target(0.0f, 0.0f, 0.0f);
-	D3DXVECTOR3 up(0.0f, 1.0f, 0.0f);
-	D3DXMATRIX V;
-	D3DXMatrixLookAtLH(&V, &position, &target, &up);
+	//D3DXVECTOR3 position(0.0f, 250.0f, -300.0f);
+	//D3DXVECTOR3 target(0.0f, 0.0f, 0.0f);
+	//D3DXVECTOR3 up(0.0f, 1.0f, 0.0f);
+	//D3DXMATRIX V;
+	//D3DXMatrixLookAtLH(&V, &position, &target, &up);
 
-	m_rpDevice->SetTransform(D3DTS_VIEW, &V);
+	//m_rpDevice->SetTransform(D3DTS_VIEW, &V);
 	
 	//-----------------------------------------------------------------------------
 	// Set the projection matrix.

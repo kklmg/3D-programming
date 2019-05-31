@@ -111,3 +111,9 @@ IDirect3DDevice9* CDirect3D::GetDevice()const
 }
 
 
+void CDirect3D::SetViewTM(D3DXMATRIX* V) 
+{
+	m_pDevice->SetTransform(D3DTS_VIEW, V);
+}
+
+

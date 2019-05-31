@@ -11,6 +11,8 @@ public:
 	void BeginScene();
 	void EndScene();
 
+	void SetViewTM(D3DXMATRIX* V);
+
 	IDirect3DDevice9*  GetDevice()const;
 
 private:

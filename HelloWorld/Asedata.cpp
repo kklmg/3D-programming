@@ -3,7 +3,7 @@
 #include"Vertex.h"
 #include<unordered_set>
 #include<algorithm>
-
+#include"Global.h"
 #include"Asedata.h"
 
 
@@ -386,11 +386,11 @@ bool CASEData::ParsingAll(LPCSTR FileName)
 	{
 		switch (CMYLexer::s_CurToken_Dw)
 		{
-			case TOKENR_SCENE: m_SceneInfo.parse(m_plexer); break;
-			case TOKENR_MATERIAL_LIST:ParseMaterial(); break;
-			case TOKENR_GEOMOBJECT:	ParseGemoObject();	break;
-			//case TOKENR_HELPEROBJECT:	LoadHelpObject(ASE); break;
-			//case TOKENR_SHAPEOBJECT:	LoadShapeObject(ASE); break;
+			case TOKENR_SCENE:				m_SceneInfo.parse(m_plexer); break;
+			case TOKENR_MATERIAL_LIST:		ParseMaterial(); break;
+			case TOKENR_GEOMOBJECT:			ParseGemoObject();	break;
+			case TOKENR_HELPEROBJECT:		ParseHelperObject(); break;
+			case TOKENR_SHAPEOBJECT:		ParseShapeObject(); break;
 		}
 	}
 
@@ -399,6 +399,25 @@ bool CASEData::ParsingAll(LPCSTR FileName)
 
 	return true;
 }
+
+bool CASEData::CreateD3DMat(std::vector<OBJ::STMaterial*>&vecd3Mat, LPCSTR FileDir)
+{
+	vecd3Mat.resize(m_vecMaterial.size(), nullptr);
+
+	for (int i = 0; i < m_vecMaterial.size(); ++i)
+	{
+		m_vecMaterial[i]->CreateD3DMat(FileDir, &vecd3Mat[i], m_vecMaterial[i]);
+	}
+
+	return true;
+}
+
+STScene* CASEData::GetSceneData()
+{
+	return &m_SceneInfo;
+}
+
+
 
 
 //private function------------------------------
@@ -413,6 +432,30 @@ void CASEData::ParseGemoObject()
 
 	//create inheritTable
 	m_InheritData.InsertData(GeoObj->m_strNodeParent, GeoObj->m_strNodeName);
+}
+
+void CASEData::ParseShapeObject() 
+{
+	STShapeObject*ShapeObj = new STShapeObject;
+
+	ShapeObj->Parse(m_plexer);
+
+	m_vecShapeObj.push_back(ShapeObj);
+
+	//create inheritTable
+	m_InheritData.InsertData(ShapeObj->m_strNodeParent, ShapeObj->m_strNodeName);
+}
+
+void CASEData::ParseHelperObject()
+{
+	STHelperObject*Helper = new STHelperObject;
+
+	Helper->Parse(m_plexer);
+
+	m_vecHelpObj.push_back(Helper);
+
+	//create inheritTable
+	m_InheritData.InsertData(Helper->m_strNodeParent, Helper->m_strNodeName);
 }
 
 bool CASEData::ParseMaterial()
@@ -436,6 +479,17 @@ bool CASEData::ParseMaterial()
 	}
 	return TRUE;
 }
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -523,58 +577,7 @@ bool CASEData::ParseMaterial()
 //	return TRUE;
 //}
 
-//bool CASEParser::LoadShapeLine(CLineData *line)
-//{
-//	if (line == NULL)
-//	{
-//		return FALSE;
-//	}
-//	int lineID, vtID;
-//	FindNextToken();
-//	lineID = StrToInt(g_strToken);
-//	FindBlockStart();
-//	while (FindTokenUltra(4, TOKEND_BLOCK_END, TOKENR_SHAPE_CLOSED, TOKENR_SHAPE_VERTEXCOUNT, TOKENR_SHAPE_VERTEX_KNOT, TOKENR_SHAPE_VERTEX_INTERP))
-//	{
-//		switch (g_iToken)
-//		{
-//		case TOKENR_SHAPE_CLOSED:  line[lineID].closed = TRUE; break;
-//		case TOKENR_SHAPE_VERTEXCOUNT:
-//		{
-//			FindNextToken();
-//			line[lineID].VertexCount = StrToInt(g_strToken);
-//			line[lineID].LineVertex = new STLineVertexData[line[lineID].VertexCount];
 
-//		}break;
-//		case TOKENR_SHAPE_VERTEX_KNOT:
-//		{
-//			FindNextToken();
-//			vtID = StrToInt(g_strToken);
-//			line[lineID].LineVertex[vtID].VertexType = VERTEX_KNOT;
-//			FindNextToken();
-//			line[lineID].LineVertex[vtID].Vertex.x = StrToFloat(g_strToken);
-//			FindNextToken();
-//			line[lineID].LineVertex[vtID].Vertex.z = StrToFloat(g_strToken);
-//			FindNextToken();
-//			line[lineID].LineVertex[vtID].Vertex.y = StrToFloat(g_strToken);
-//			break;
-//		}
-//		case TOKENR_SHAPE_VERTEX_INTERP:
-//		{
-//			FindNextToken();
-//			vtID = StrToInt(g_strToken);
-//			line[lineID].LineVertex[vtID].VertexType = VERTEX_INTERP;
-//			FindNextToken();
-//			line[lineID].LineVertex[vtID].Vertex.x = StrToFloat(g_strToken);
-//			FindNextToken();
-//			line[lineID].LineVertex[vtID].Vertex.z = StrToFloat(g_strToken);
-//			FindNextToken();
-//			line[lineID].LineVertex[vtID].Vertex.y = StrToFloat(g_strToken);
-//			break;
-//		}
-//		}
-//	}
-//	return TRUE;
-//}
 
 
 

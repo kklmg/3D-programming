@@ -159,7 +159,7 @@ bool OBJ::CMesh::DrawFace(WORD Index)
 
 
 
-
+//-------------------------------------------------------------------
 OBJ::CGemoObj::CGemoObj():
 	m_pMesh(nullptr),
 	m_wMatId(0)
@@ -201,6 +201,124 @@ void OBJ::CGemoObj::SetMatID(WORD mat)
 }
 
 
+//Shape Object
+//-------------------------------------------------------------------
 
+OBJ::CLineBuffer::CLineBuffer():
+	m_bClosed(false),
+	m_pLineVB(nullptr),
+	m_wCount(0)
+{
+
+}
+
+OBJ::CLineBuffer::~CLineBuffer() 
+{
+	SAFE_RELEASE(m_pLineVB);
+}
+
+void OBJ::CLineBuffer::SetBuffer(STVTX_P* vtx, DWORD count, bool isclose) 
+{
+	SAFE_RELEASE(m_pLineVB);
+
+	m_wCount = count;
+	m_bClosed = isclose;
+	//create Buffer
+	HRESULT hres=
+	g_pDevice->CreateVertexBuffer(
+		sizeof(STVTX_P)*count, 0, STVTX_P::FVF, D3DPOOL_DEFAULT, &m_pLineVB, nullptr);
+
+	//write memory
+	void* pLineVT;
+	m_pLineVB->Lock(0, sizeof(STVTX_P)*count, (void**)&pLineVT, 0);
+	memcpy(pLineVT, vtx, sizeof(STVTX_P)*count);
+	m_pLineVB->Unlock();
+}
+
+HRESULT OBJ::CLineBuffer::Draw() 
+{
+	//Set Source
+	g_pDevice->SetStreamSource(0, m_pLineVB, 0, sizeof(STVTX_P));
+	g_pDevice->SetFVF(STVTX_P::FVF);
+
+	if (m_bClosed)
+		return g_pDevice->DrawPrimitive(D3DPT_LINESTRIP, 0, m_wCount-1);
+	else
+		return g_pDevice->DrawPrimitive(D3DPT_LINELIST, 0, m_wCount-1);
+}
+
+
+OBJ::CShapeObj::CShapeObj() 
+{
+}
+
+OBJ::CShapeObj::~CShapeObj() 
+{
+	for (auto ptr : m_vecLines) 
+	{
+		SAFE_DELETE(ptr);
+	}
+}
+
+bool OBJ::CShapeObj::Draw(std::vector<STMaterial*>&mat)
+{
+	for (auto ptr : m_vecLines)
+	{
+		ptr->Draw();
+	}
+	return true;
+}
+
+void OBJ::CShapeObj::AddLines(CLineBuffer* linebuff) 
+{
+	if(linebuff)
+	m_vecLines.push_back(linebuff);
+}
+
+
+
+//Camera Object
+//-------------------------------------------------------------------
+
+OBJ::CCameraObj::CCameraObj() 
+{
+}
+
+OBJ::CCameraObj::~CCameraObj() 
+{
+}
+
+
+bool OBJ::CCameraObj::Draw(std::vector<STMaterial*>&mat) 
+{
+	return true;
+}
+
+
+
+
+//Helper Object
+//-------------------------------------------------------------------
+
+OBJ::CHelperObj::CHelperObj() 
+{
+}
+OBJ::CHelperObj::~CHelperObj() 
+{
+}
+
+bool OBJ::CHelperObj::Draw(std::vector<STMaterial*>&mat) 
+{
+	return true;
+}
+
+void OBJ::CHelperObj::SetBound_min(D3DXVECTOR3 &vt3) 
+{
+	m_vt3bound_min = vt3;
+}
+void OBJ::CHelperObj::SetBound_max(D3DXVECTOR3 &vt3) 
+{
+	m_vt3bound_max = vt3;
+}
 
 

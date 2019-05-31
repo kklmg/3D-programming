@@ -1,4 +1,5 @@
 #include"stdafx.h"
+#include"Vertex.h"
 #include"ObjCom.h"
 #include"Global.h"
 
@@ -139,7 +140,7 @@ D3DXMATRIX OBJ::CObjNode::GetParWorld() const
 		return m_TMRoot;
 }
 
-void OBJ::CObjNode::SetAni(CObjAni*ani)
+void OBJ::CObjNode::SetAni(CAniTrack*ani)
 {
 	m_pAni = ani;
 }

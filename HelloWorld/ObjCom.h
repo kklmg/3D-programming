@@ -1,5 +1,7 @@
 #pragma once
 #include"Timer.h"
+#include"Vertex.h"
+
 
 namespace OBJ 
 {
@@ -56,58 +58,70 @@ namespace OBJ
 		std::vector<STFaceMat> m_vecFaceMat;
 	};
 
-	struct STAniTrack
+
+	class CAniTrack
 	{
-		STAniTrack();
-		~STAniTrack();
+		struct STPosTrack
+		{
+			STPosTrack(double keytime, D3DXVECTOR3 &pos)
+				:dKeyTime(keytime), Vt3Pos(pos) {}
 
-		DWORD dwTick;
+			double dKeyTime;			//key
+			D3DXVECTOR3 Vt3Pos;		//position
+		};
+		struct STRotTrack
+		{
+			STRotTrack(double keytime, D3DXQUATERNION &quatrot)
+				:dKeyTime(keytime), QuatRot(quatrot) {}
 
-		double dKeyTime;			//key
+			double dKeyTime;			//key
+			D3DXQUATERNION QuatRot;	//rotation
+		};
+		struct STScaleTrack
+		{
+			STScaleTrack(double keytime, D3DXQUATERNION &quatrot, D3DXVECTOR3 &vt3)
+				:dKeyTime(keytime), QuatScaleRot(quatrot),Vt3Scale(vt3) {}
 
-		D3DXVECTOR3 *pVt3Pos;		//position
+			double dKeyTime;			//key
+			D3DXVECTOR3 Vt3Scale;		//Scale
+			D3DXQUATERNION QuatScaleRot;	//scale Axis
+		};
 
-		D3DXQUATERNION *pQuatRot;	//rotation
-
-		D3DXVECTOR3 *pVt3Scale;		//Scale
-		D3DXQUATERNION *pQuatScaleRot;	//scale Axis
-	};
-
-	class CObjAni
-	{
 	public:
-
-		CObjAni();
-		~CObjAni();
+		CAniTrack();
+		~CAniTrack();
 
 		void Update();
+
 		D3DXMATRIX GetAniMatrix(D3DXMATRIX LocalTM);
 
-		bool __Lerp(D3DXMATRIX &pos, D3DXMATRIX&rot, D3DXMATRIX&scale);
+		bool __Lerp(D3DXMATRIX &__pos, D3DXMATRIX&__rot, D3DXMATRIX&__scale);
 
-		bool NewPos(WORD key, double time, D3DXVECTOR3 pos);
-		bool NewRot(WORD key, double time, D3DXQUATERNION rot);
-		bool NewScale(WORD key, double time, D3DXVECTOR3 scale, D3DXQUATERNION rot);
+
+		CTimer m_Timer;
+
+		double m_dLastTime;
+
+
+
+		void NewPos(double time, D3DXVECTOR3& pos);
+		void NewRot(double time, D3DXQUATERNION& rot);
+		void NewScale(double time, D3DXVECTOR3& scale, D3DXQUATERNION& rot);
+
 
 		void ComputeAbsPos();
 		void ComputeAbsRot();
 
-	
+	private:
+		WORD m_wKeyPos;
+		WORD m_wKeyRot;
+		WORD m_wKeyScale;
 
-		double m_dLastTime;
-
-		CTimer m_Timer;
-
-		bool m_bPosTrack;
-		bool m_bRotTrack;
-		bool m_bScaleTrack;
-
-		WORD m_wCurKey;
-		WORD m_wMaxKey;
-
-		std::vector<STAniTrack*> m_vecTrack;
-
+		std::vector<STPosTrack> m_vecPosTrack;
+		std::vector<STRotTrack> m_vecRotTrack;
+		std::vector<STScaleTrack> m_vecScaleTrack;
 	};
+
 
 	class CObjNode
 	{
@@ -121,10 +135,10 @@ namespace OBJ
 		//Animation
 		//------------------------------------------------------------
 	public:
-		void SetAni(CObjAni*ani);			//Set Animation 
+		void SetAni(CAniTrack*ani);			//Set Animation 
 
 	private:
-		CObjAni *m_pAni;					//Animation Data
+		CAniTrack *m_pAni;					//Animation Data
 
 		//Update Node
 		//--------------------------------------------------------------
@@ -200,4 +214,64 @@ namespace OBJ
 		CMesh* m_pMesh;
 		WORD m_wMatId;
 	};
+
+	class CLineBuffer
+	{
+	public:
+		CLineBuffer();
+		virtual ~CLineBuffer();
+
+		void SetBuffer(STVTX_P* vtx, DWORD count, bool isclose);
+		HRESULT Draw();
+	private:
+		bool m_bClosed;
+		LPDIRECT3DVERTEXBUFFER9 m_pLineVB;
+		WORD m_wCount;
+	};
+
+
+	class CShapeObj : public CObjNode
+	{	
+	public:
+		CShapeObj();
+		virtual ~CShapeObj();
+
+		void AddLines(CLineBuffer* linebuff);
+
+		virtual bool Draw(std::vector<STMaterial*>&mat);
+	private:
+		std::vector<CLineBuffer*>m_vecLines;
+	};
+
+	class CCameraObj :public CObjNode 
+	{
+	public:
+		CCameraObj();
+		virtual ~CCameraObj();
+		
+
+		virtual bool Draw(std::vector<STMaterial*>&mat);
+	private:
+		std::vector<CLineBuffer*>m_vecLines;
+	};
+
+	class CHelperObj :public CObjNode
+	{
+	public:
+		CHelperObj();
+		virtual ~CHelperObj();
+
+		virtual bool Draw(std::vector<STMaterial*>&mat);
+
+		void SetBound_min(D3DXVECTOR3 &vt3);
+		void SetBound_max(D3DXVECTOR3 &vt3);
+
+	private:
+		D3DXVECTOR3 m_vt3bound_min;
+		D3DXVECTOR3 m_vt3bound_max;	
+	};
+
+
 }
+
+

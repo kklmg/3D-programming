@@ -1,6 +1,4 @@
 #pragma once
-#include"Asedata.h"
-#include"Global.h"
 
 struct STVTX_P
 {
@@ -48,6 +46,21 @@ struct STVTX_PT
 	D3DXVECTOR2 Tex;
 	static const DWORD FVF;
 };
+
+struct STVTX_PWBNT
+{
+	D3DXVECTOR3 Pos;
+	float Weight[3];
+	BYTE  Bone[4];
+	D3DXVECTOR3 Normal;
+	D3DXVECTOR2 Tex;
+	static const DWORD FVF = D3DFVF_XYZB4 | D3DFVF_LASTBETA_UBYTE4 | D3DFVF_NORMAL | D3DFVF_TEX1;
+};
+
+
+
+
+
 
 struct STVTX_GRID
 {

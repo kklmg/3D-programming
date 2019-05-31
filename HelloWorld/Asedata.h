@@ -27,11 +27,7 @@ namespace ASEData
 		eStandard,
 		eMulti 
 	};	
-	enum enLineType
-	{ 
-		VERTEX_KNOT, 
-		VERTEX_INTERP 
-	};
+
 
 
 
@@ -53,6 +49,11 @@ namespace ASEData
 		{
 			return m_wFrameSpeed*m_wTicksPerFrame;
 		}
+		double GetEndTime() const 
+		{
+			return (double)(m_wLastFrame) / (double)m_wFrameSpeed;
+		}
+
 
 		bool parse(CMYLexer *lexer);
 	};
@@ -90,24 +91,7 @@ namespace ASEData
 		std::vector<STMaterial*> m_vecSubMat;
 	};
 
-	//-----------------------------------------------------------------
-	//Line Vertex Data
-	//-----------------------------------------------------------------
-	struct STVertex_Line
-	{
-		enLineType VertexType;
-		D3DXVECTOR3 Vertex;
-	};
 
-	struct STLine
-	{
-		STLine();
-		~STLine();
-
-		bool m_bClosed;
-		DWORD m_dwVertexCount;
-		STVertex_Line *m_pLineVertex;
-	};
 
 	//-----------------------------------------------------------------
 	//Node Transform Matrix 
@@ -191,7 +175,6 @@ namespace ASEData
 	};
 
 
-
 	//-----------------------------------------------------------------
 	//face Data
 	//-----------------------------------------------------------------
@@ -254,9 +237,6 @@ namespace ASEData
 		//Data Container
 		std::vector<D3DXVECTOR3> m_vecVertex;	//pos Data
 		std::vector<D3DXVECTOR2> m_vecTex;		//Texture Data	
-	//	std::vector<STFloat3> m_vecNormal;		//Texture Data	
-		
-
 		std::vector<CFace*>m_vecFace;			//Face Data
 
 
@@ -309,7 +289,7 @@ namespace ASEData
 	
 		void Parse(CMYLexer *lexer);
 
-		OBJ::CObjAni* CreateAni(STScene* Data);
+		OBJ::CAniTrack* CreateAni(STScene* Data);
 		
 	private:
 		void __ParsePos(CMYLexer *lexer);
@@ -334,7 +314,9 @@ namespace ASEData
 		std::string m_strNodeName;
 		std::string m_strNodeParent;
 
-		OBJ::CObjAni* CreateAni(STScene* Data);
+		OBJ::CAniTrack* CreateAni(STScene* Data);
+
+		virtual void Parse(CMYLexer *lexer) = 0;
 
 		STNodeTM m_NodeTM;
 		CAniData m_AniData;
@@ -344,7 +326,7 @@ namespace ASEData
 	{
 		STGEOMObject();
 
-		void Parse(CMYLexer *lexer);
+		virtual void Parse(CMYLexer *lexer);
 
 		OBJ::CGemoObj* CreateGemoObj();
 
@@ -352,22 +334,68 @@ namespace ASEData
 		WORD  m_wMatRef;	
 	};
 
+
+
+	struct STLines
+	{
+		STLines();
+		~STLines();
+
+		virtual void parse(CMYLexer *lexer);
+		void Transform(D3DXMATRIX * TM);
+
+		WORD wCount;
+		bool bClosed;
+		STVTX_P* pVertex;
+	};
+
+	//Line Object
 	struct STShapeObject :public STObject
 	{
-	public:
-		//STShapeObject();
-		//~STShapeObject();
+		STShapeObject();
+		~STShapeObject();
+		
+		virtual void Parse(CMYLexer *lexer);
+		OBJ::CShapeObj* CreateShapeObj();
 
-		int LineCount;
-	//	CLineData *Line;
+		std::vector<STLines> vecLines;
 	};
 
-	struct STHelperObject
+	struct STHelperObject :public STObject
+	{
+		STHelperObject();
+		~STHelperObject();
+
+
+		D3DXVECTOR3 m_vt3bound_min;
+		D3DXVECTOR3 m_vt3bound_max;
+
+		virtual void Parse(CMYLexer *lexer);
+		OBJ::CHelperObj* CreateHelperObj();
+
+	};
+
+	struct STCameraAni 
+	{
+		DWORD dwTrack;
+		float fFOV;
+	};
+
+
+	struct STCameraObj :public STObject
 	{
 	public:
-		//STHelperObject();
-		//~STHelperObject();
+		STCameraObj();
+		~STCameraObj();
+
+		float m_fFOV;
+		std::list<STCameraAni>m_listCameraAni;
+		
+		virtual void Parse(CMYLexer *lexer);
+		OBJ::CCameraObj* CreateCameraObj();
+
 	};
+
 
 	class CInheritData 
 	{
@@ -394,41 +422,23 @@ namespace ASEData
 
 		bool ParsingAll(LPCSTR FileName);
 
-		bool CreateD3DMat(std::vector<OBJ::STMaterial*>&vecd3Mat,LPCSTR FileDir) 
-		{
-			vecd3Mat.resize(m_vecMaterial.size(),nullptr);
+		bool CreateD3DMat(std::vector<OBJ::STMaterial*>&vecd3Mat, LPCSTR FileDir);
 
-			for (int i = 0; i < m_vecMaterial.size(); ++i)
-			{
-				m_vecMaterial[i]->CreateD3DMat(FileDir, &vecd3Mat[i], m_vecMaterial[i]);
-			}
+		
 
-			return true;
-		}
-
-		STScene* GetSceneData()
-		{
-			return &m_SceneInfo;
-		}
-
-	private:
+		//parsing 
 		bool ParseMaterial();
-
-	
-
-		//bool ParseMaterialHelper(STMaterial *mat);
-
 		void ParseGemoObject();
-
-		void ParseObject()
-		{
-			
-		}
-
-		CMYLexer *m_plexer;
-public:
+		void ParseShapeObject();
+		void ParseHelperObject();
 	
+	
+		CMYLexer *m_plexer;
+
+		STScene* GetSceneData();
 		STScene m_SceneInfo;
+
+		
 		std::vector<STGEOMObject*> m_vecGemoObj;
 		std::vector<STHelperObject*> m_vecHelpObj;
 		std::vector<STShapeObject*> m_vecShapeObj;

@@ -7,7 +7,7 @@ public:
 	~CObject();
 
 	bool Init(std::string str);
-	bool Init(ASEData::CASEData& asedata);
+	bool Init(ASEData::CASEData& asedata, std::string &dir);
 	
 	bool PlayAnimation(WORD AniID);
 

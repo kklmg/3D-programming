@@ -154,6 +154,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Asedata.h" />
+    <ClInclude Include="Camera.h" />
     <ClInclude Include="CGDefinitions.h" />
     <ClInclude Include="Convert.h" />
     <ClInclude Include="D3DClass.h" />
@@ -187,9 +188,11 @@
     <ClInclude Include="Vertex.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="AseAni.cpp" />
     <ClCompile Include="Asedata.cpp" />
     <ClCompile Include="ASEMesh.cpp" />
     <ClCompile Include="ASEObj.cpp" />
+    <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Convert.cpp" />
     <ClCompile Include="D3DClass.cpp" />
     <ClCompile Include="DropFile.cpp" />

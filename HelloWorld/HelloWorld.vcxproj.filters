@@ -94,6 +94,9 @@
     <Filter Include="Other\Backup">
       <UniqueIdentifier>{bb9840a8-8d19-47a3-9592-5d513cd30352}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Camera">
+      <UniqueIdentifier>{6cdbab79-c67a-4af8-a6f0-36f5a4ba9756}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -195,6 +198,9 @@
     <ClInclude Include="FpsMng.h">
       <Filter>Time</Filter>
     </ClInclude>
+    <ClInclude Include="Camera.h">
+      <Filter>Camera</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Global.cpp">
@@ -283,6 +289,12 @@
     </ClCompile>
     <ClCompile Include="FpsMng.cpp">
       <Filter>Time</Filter>
+    </ClCompile>
+    <ClCompile Include="AseAni.cpp">
+      <Filter>File\ASE3DData</Filter>
+    </ClCompile>
+    <ClCompile Include="Camera.cpp">
+      <Filter>Camera</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

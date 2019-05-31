@@ -25,10 +25,19 @@ CObject::~CObject()
 
 bool CObject::Init(std::string str)
 {
+	WORD index;
+
 	//check file type
 	std::string postfix;
-	WORD index = str.find('.');
+	index = str.find('.');
 	postfix.append(str, index + 1, str.size());
+
+	//get file Dir
+	std::string Dir;
+	index = str.find_last_of('/');
+
+	if (index != 65535) 
+	Dir.append(str, 0, index);
 
 	if (postfix == "ase" || postfix == "ASE")
 	{
@@ -36,23 +45,22 @@ bool CObject::Init(std::string str)
 
 		data.ParsingAll(str.data());
 
-		Init(data);
+		Init(data, Dir);
 		return true;
 	}
 	else
 		return false;
 }
 
-bool CObject::Init(ASEData::CASEData& asedata)
+bool CObject::Init(ASEData::CASEData& asedata, std::string &dir)
 {
 	//Material Setting
-	asedata.CreateD3DMat(m_vecMat, "ASEFile");
+	asedata.CreateD3DMat(m_vecMat, dir.data());
 
 	OBJ::CObjNode* newObj;
 	
 	//Create Geom object
-	//----------------------------------------------------------
-	
+	//----------------------------------------------------------	
 	for (auto ptr : asedata.m_vecGemoObj)
 	{
 		//create mesh
@@ -71,7 +79,48 @@ bool CObject::Init(ASEData::CASEData& asedata)
 		m_mapObjs[newObj->GetNodeName()] = newObj;
 	}
 
+	//Create Shape object
+	//----------------------------------------------------------	
+	for (auto ptr : asedata.m_vecShapeObj)
+	{
+		//create mesh
+		newObj = ptr->CreateShapeObj();
+
+		//create animation
+		newObj->SetAni(ptr->CreateAni(asedata.GetSceneData()));
+
+		//set root
+		if (asedata.m_InheritData.IsRoot(newObj->GetNodeName()))
+		{
+			m_vecRoot.push_back(newObj);
+		}
+
+		//insert data
+		m_mapObjs[newObj->GetNodeName()] = newObj;
+	}
+	//Create Helper object
+	//----------------------------------------------------------	
+	for (auto ptr : asedata.m_vecHelpObj)
+	{
+		//create mesh
+		newObj = ptr->CreateHelperObj();
+
+		//create animation
+		newObj->SetAni(ptr->CreateAni(asedata.GetSceneData()));
+
+		//set root
+		if (asedata.m_InheritData.IsRoot(newObj->GetNodeName()))
+		{
+			m_vecRoot.push_back(newObj);
+		}
+
+		//insert data
+		m_mapObjs[newObj->GetNodeName()] = newObj;
+	}
 	
+
+
+
 	//find and set children
 	//---------------------------------------------------------
 	std::list<std::string>*Childlist;
@@ -84,14 +133,18 @@ bool CObject::Init(ASEData::CASEData& asedata)
 		{
 			for (auto ListIter : *Childlist) 
 			{
-				child = m_mapObjs.find(ListIter)->second;
+				auto MapIter = m_mapObjs.find(ListIter);
 
-				//set child
-				Iter.second->SetChildren(child);
+				if (MapIter != m_mapObjs.end())
+				{
+					child = m_mapObjs.find(ListIter)->second;
 
-				//set parent
-				child->SetParent(Iter.second);
+					//set child
+					Iter.second->SetChildren(child);
 
+					//set parent
+					child->SetParent(Iter.second);
+				}
 			}
 		}
 	}
