@@ -30,8 +30,6 @@ namespace ASEData
 
 
 
-
-
 	//------------------------------------------------------------------
 	//Scene Data
 	//------------------------------------------------------------------
@@ -124,19 +122,6 @@ namespace ASEData
 		float m_fTM_SCALEAXISANG;
 	};
 
-	//-----------------------------------------------------------------
-	//Animation Data
-	//-----------------------------------------------------------------
-	struct STMeshBlendWeight
-	{
-		DWORD BoneID;
-		float Weight;
-	};
-
-	struct CMeshWeightData
-	{
-		std::vector<STMeshBlendWeight>m_vecMeshWeight;
-	};
 
 
 	//-----------------------------------------------------------------
@@ -194,6 +179,36 @@ namespace ASEData
 		DWORD RefMat;
 	};
 
+
+	//-----------------------------------------------------------------
+	//Weight Data
+	//-----------------------------------------------------------------
+	struct _Weight
+	{
+		_Weight();
+		_Weight(WORD _id, float _wt);
+
+		WORD wID;
+		float fWeight;
+	};
+
+	bool CompareWeight(_Weight& a, _Weight& b);
+
+	struct STWeight 
+	{
+		void Add(WORD id, float weight);
+		void Clip();
+
+		void Export(STVTX_PWBNT& vtx);
+
+		std::vector<_Weight>vecWeight;
+	};
+
+
+
+	//-----------------------------------------------------------------
+	//Mesh Data
+	//-----------------------------------------------------------------
 	class CMesh
 	{
 	public:
@@ -207,15 +222,18 @@ namespace ASEData
 		bool ParseTexture(CMYLexer *lexer);
 		bool ParseTextureFace(CMYLexer *lexer);
 		bool ParseNormal(CMYLexer *lexer);
+		bool ParseBone(CMYLexer *lexer);
+		bool ParseWeight(CMYLexer *lexer);
 		
 
 		bool RecieveVTX_INDEX(void **Getvtx,WORD &vtxcount,WORD **Indicies, const D3DXMATRIX *Transform);
 	//private:
+		//create vertex buffer & index buffer
 		bool CreateVI_P(void **Getvtx, WORD &vtxcount, WORD **Indicies, const D3DXMATRIX *Transform);
 		bool CreateVI_PN(void **Getvtx, WORD &vtxcount, WORD **Indicies, const D3DXMATRIX *Transform);
 		bool CreateVI_PNT(void **Getvtx, WORD &vtxcount, WORD **Indicies, const D3DXMATRIX *Transform);
 		bool CreateVI_PT(void **Getvtx, WORD &vtxcount, WORD **Indicies, const D3DXMATRIX *Transform);
-
+		bool CreateVI_PWBNT(void **Getvtx, WORD &vtxcount, WORD **Indicies, const D3DXMATRIX *Transform);
 
 		DWORD CheckFormat();
 		OBJ::CMesh* CreateMesh(const D3DXMATRIX *Transform = nullptr);
@@ -226,8 +244,6 @@ namespace ASEData
 		WORD m_wNumFace;
 		WORD m_wNumTexture;
 		WORD m_wNumTextureFace;
-		WORD m_wNumBone;
-		WORD m_wNumSkinWeight;
 		DWORD m_dwFVF;
 		WORD m_wPerVtxSize;
 		bool m_bNormal;
@@ -238,11 +254,9 @@ namespace ASEData
 		std::vector<D3DXVECTOR3> m_vecVertex;	//pos Data
 		std::vector<D3DXVECTOR2> m_vecTex;		//Texture Data	
 		std::vector<CFace*>m_vecFace;			//Face Data
+		std::vector<std::string>m_vecBone;		//Bone Data
+		std::vector<STWeight>m_vecWeight;		//Weight Data
 
-
-		//CMeshWeightData *m_pWeightList;
-
-		//char**m_ppBoneNameList;
 	};
 
 
@@ -304,7 +318,9 @@ namespace ASEData
 
 
 
-
+	//-----------------------------------------------------------------
+	//Object Data
+	//-----------------------------------------------------------------
 
 	struct STObject
 	{
@@ -328,7 +344,8 @@ namespace ASEData
 
 		virtual void Parse(CMYLexer *lexer);
 
-		OBJ::CGemoObj* CreateGemoObj();
+		OBJ::CGemoObj* CreateGemoObj(); 
+		OBJ::CSkinObj* CreateSkinObj();
 
 		CMesh m_Mesh;
 		WORD  m_wMatRef;	
@@ -413,7 +430,9 @@ namespace ASEData
 		
 	};
 
-
+	//-----------------------------------------------------------------
+	//ASE Data
+	//-----------------------------------------------------------------
 	class CASEData
 	{
 	public:
@@ -440,6 +459,7 @@ namespace ASEData
 
 		
 		std::vector<STGEOMObject*> m_vecGemoObj;
+		std::vector<STGEOMObject*> m_vecSkinObj;
 		std::vector<STHelperObject*> m_vecHelpObj;
 		std::vector<STShapeObject*> m_vecShapeObj;
 		std::vector<STMaterial*>m_vecMaterial;

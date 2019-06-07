@@ -28,7 +28,7 @@ namespace OBJ
 		CMesh();
 		~CMesh();
 
-		bool InitVBuffer(DWORD FVF, DWORD vtxCount,DWORD size, void* ptr);
+		bool InitVBuffer(DWORD FVF, DWORD vtxCount,DWORD size, void* ptr,bool IsSkin=false);
 	
 		void AddFaceMat(STFaceMat& face);
 
@@ -52,8 +52,12 @@ namespace OBJ
 		DWORD m_dwFaceCount;
 		DWORD m_dwVTXCount;
 
+		bool m_bIsSkin;
+
 		IDirect3DVertexBuffer9* m_pVB;
 		IDirect3DIndexBuffer9*  m_pIB;
+		LPDIRECT3DVERTEXDECLARATION9 m_VD;
+
 
 		std::vector<STFaceMat> m_vecFaceMat;
 	};
@@ -147,6 +151,8 @@ namespace OBJ
 	private:
 		void __updateHelper(CObjNode*node);
 
+		virtual void UpdateWorld();
+
 		//Draw Node
 		//--------------------------------------------------------------
 	public:
@@ -174,6 +180,13 @@ namespace OBJ
 		CObjNode* m_pParent;					//parent node
 		std::vector<CObjNode*>m_vecChildren;	//childeren nodes
 
+		//Skin
+		//--------------------------------------------------------------
+	public:
+		void UpdateSkinTM();
+		void SetSkin(D3DXMATRIX * slot);
+	private:
+		D3DXMATRIX *m_pTMSkin;
 
 		//Basic 
 		//--------------------------------------------------------------
@@ -186,7 +199,7 @@ namespace OBJ
 		void SetWorldTM(D3DXMATRIX TM); 
 		void SetRootTM(D3DXMATRIX TM);
 
-	private:
+	protected:
 		
 
 		std::string m_strNodeName;			//Node Name
@@ -214,6 +227,26 @@ namespace OBJ
 		CMesh* m_pMesh;
 		WORD m_wMatId;
 	};
+
+	
+	class CSkinObj : public CGemoObj
+	{
+	public:
+		CSkinObj();
+		~CSkinObj();
+
+		void InitPalette(std::vector<std::string>&vec);
+
+		D3DXMATRIX* GetSlot(const std::string& str);
+
+		virtual void UpdateWorld();
+
+	private:
+		std::vector<std::pair<std::string, D3DXMATRIX>>m_vecPalette; //matrix palette
+	};
+
+
+
 
 	class CLineBuffer
 	{

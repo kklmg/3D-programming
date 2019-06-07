@@ -29,7 +29,8 @@ OBJ::CMesh::CMesh() :
 	m_dwFaceCount(0),
 	m_dwVTXCount(0),
 	m_pVB(nullptr),
-	m_pIB(nullptr)
+	m_pIB(nullptr),
+	m_bIsSkin(false)
 {
 }
 
@@ -39,13 +40,17 @@ OBJ::CMesh::~CMesh()
 	SAFE_RELEASE(m_pIB);
 }
 
-bool OBJ::CMesh::InitVBuffer(DWORD FVF, DWORD vtxCount, DWORD size, void* ptr)
+bool OBJ::CMesh::InitVBuffer(DWORD FVF, DWORD vtxCount, DWORD size, void* ptr,bool IsSkin)
 {
 	//init basic attribute
 	m_dwFVF = FVF;
 
 	m_dwVTXCount = vtxCount;
 	m_dwVTXSize = size;
+
+	m_bIsSkin = IsSkin;
+	if(IsSkin)
+	g_pDevice->CreateVertexDeclaration(SkinVertexDecl, &m_VD);
 
 	//create buffer
 	g_pDevice->CreateVertexBuffer(vtxCount*size, D3DUSAGE_WRITEONLY, m_dwFVF, D3DPOOL_MANAGED, &m_pVB, 0);
@@ -124,6 +129,13 @@ bool OBJ::CMesh::InitIBuffer(void* ptr)
 
 void OBJ::CMesh::SetSource() 
 {
+	if (m_bIsSkin)
+	{
+		g_pDevice->SetRenderState(D3DRS_INDEXEDVERTEXBLENDENABLE, true);
+		g_pDevice->SetRenderState(D3DRS_VERTEXBLEND, D3DVBF_3WEIGHTS);
+		//g_pDevice->SetVertexDeclaration(m_VD);
+	}
+
 	g_pDevice->SetStreamSource(0, m_pVB, 0, m_dwVTXSize);
 	g_pDevice->SetIndices(m_pIB);
 	g_pDevice->SetFVF(m_dwFVF);
@@ -133,12 +145,21 @@ bool OBJ::CMesh::Draw()
 {
 	SetSource();
 	g_pDevice->DrawIndexedPrimitive(D3DPT_TRIANGLELIST, 0, 0, m_dwVTXCount, 0, m_dwFaceCount);	
+
+	if (m_bIsSkin)
+	{
+		g_pDevice->SetRenderState(D3DRS_INDEXEDVERTEXBLENDENABLE, false);
+		g_pDevice->SetRenderState(D3DRS_VERTEXBLEND,false);
+	}
 	return true;
 }
 
 
 bool OBJ::CMesh::DrawEX(std::vector<STMaterial*>&mat) 
 {
+	//it's too slow if i stitch texture and materials when in blend verticies
+	if (m_bIsSkin) return this->Draw();
+
 	SetSource();
 
 	int i = 0, j = 0;
@@ -148,6 +169,13 @@ bool OBJ::CMesh::DrawEX(std::vector<STMaterial*>&mat)
 		g_pDevice->SetTexture(0, mat[m_vecFaceMat[i].wMatID]->pTexture);
 		g_pDevice->DrawIndexedPrimitive(D3DPT_TRIANGLELIST, 0, 0, m_dwVTXCount, j, 1);
 	}
+
+	if (m_bIsSkin)
+	{
+		g_pDevice->SetRenderState(D3DRS_INDEXEDVERTEXBLENDENABLE, false);
+		g_pDevice->SetRenderState(D3DRS_VERTEXBLEND, false);
+	}
+
 	return true;
 }
 bool OBJ::CMesh::DrawFace(WORD Index) 
@@ -201,6 +229,56 @@ void OBJ::CGemoObj::SetMatID(WORD mat)
 }
 
 
+
+
+OBJ::CSkinObj::CSkinObj() 
+{
+}
+
+OBJ::CSkinObj::~CSkinObj() 
+{
+}
+
+
+void OBJ::CSkinObj::UpdateWorld()
+{
+	D3DXMATRIX TM;
+
+	//set world Trasform Matrix
+	for (int i = 0; i < m_vecPalette.size(); ++i)
+	{
+		TM = m_TMOrign * m_vecPalette[i].second;
+		
+		g_pDevice->SetTransform(D3DTS_WORLDMATRIX(i), &TM);
+	}
+}
+
+
+void OBJ::CSkinObj::InitPalette(std::vector<std::string>&vec)
+{
+	m_vecPalette.resize(vec.size());
+
+	for (int i = 0; i < vec.size(); ++i)
+	{
+		m_vecPalette[i].first = vec[i];
+		m_vecPalette[i].second = g_IDMATRIX;
+	}
+}
+
+D3DXMATRIX* OBJ::CSkinObj::GetSlot(const std::string& str)
+{
+	for (int i = 0; i < m_vecPalette.size(); ++i)
+	{
+		if (str == m_vecPalette[i].first)
+		{
+			return &m_vecPalette[i].second;
+		}
+	}
+	return nullptr;
+}
+
+
+
 //Shape Object
 //-------------------------------------------------------------------
 
@@ -209,7 +287,6 @@ OBJ::CLineBuffer::CLineBuffer():
 	m_pLineVB(nullptr),
 	m_wCount(0)
 {
-
 }
 
 OBJ::CLineBuffer::~CLineBuffer() 

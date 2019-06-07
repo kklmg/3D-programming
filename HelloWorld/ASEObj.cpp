@@ -250,7 +250,6 @@ void ASEData::STGEOMObject::Parse(CMYLexer *lexer)
 OBJ::CGemoObj* ASEData::STGEOMObject::CreateGemoObj()
 {
 	OBJ::CGemoObj* newobj = new OBJ::CGemoObj;
-
 	D3DXMATRIX WorldTM, WorldTM_inv;
 
 	//Get World tranform matrix
@@ -269,12 +268,41 @@ OBJ::CGemoObj* ASEData::STGEOMObject::CreateGemoObj()
 
 	//Create Mesh
 	newobj->SetMesh(m_Mesh.CreateMesh(&WorldTM_inv));
+
 	newobj->SetMatID(m_wMatRef);
 
 	return newobj;
 }
 
+OBJ::CSkinObj* ASEData::STGEOMObject::CreateSkinObj() 
+{
+	OBJ::CSkinObj* newobj = new OBJ::CSkinObj;
+	D3DXMATRIX WorldTM, WorldTM_inv;
 
+
+	//Get World tranform matrix
+	m_NodeTM.GetWorldTM(WorldTM);
+
+	//Get Inverserd world transform Matrix
+	D3DXMatrixInverse(&WorldTM_inv, nullptr, &WorldTM);
+
+	//Set Matrix
+	newobj->SetOriginalTM(WorldTM);
+
+
+	//Set Name	
+	newobj->SetNodeName(m_strNodeName);
+	newobj->SetParNodeName(m_strNodeParent);
+
+	//Create Mesh
+	newobj->SetMesh(m_Mesh.CreateMesh(&WorldTM_inv));
+	newobj->SetMatID(m_wMatRef);
+
+
+	newobj->InitPalette(m_Mesh.m_vecBone);
+
+	return newobj;
+}
 
 
 
@@ -398,6 +426,7 @@ OBJ::CShapeObj* ASEData::STShapeObject::CreateShapeObj()
 	//Get World tranform matrix
 	m_NodeTM.GetWorldTM(WorldTM);
 
+
 	//Get Inverserd world transform Matrix
 	D3DXMatrixInverse(&WorldTM_inv, nullptr, &WorldTM);
 
@@ -482,12 +511,13 @@ OBJ::CHelperObj* ASEData::STHelperObject::CreateHelperObj()
 	OBJ::CHelperObj* NewHelperObj = new OBJ::CHelperObj();
 
 	D3DXMATRIX WorldTM, WorldTM_inv;
+	D3DXMATRIX _Trans, _Rotate, _Scale;
 
 	//Get World tranform matrix
-	m_NodeTM.GetWorldTM(WorldTM);
+	m_NodeTM.GetWorldTMEx(WorldTM, _Trans, _Rotate, _Scale);
 
-	//Get Inverserd world transform Matrix
-	D3DXMatrixInverse(&WorldTM_inv, nullptr, &WorldTM);
+	//remove scale
+	WorldTM = _Rotate * _Trans;
 
 	//Set Matrix
 	NewHelperObj->SetOriginalTM(WorldTM);

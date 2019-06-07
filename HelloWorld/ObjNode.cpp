@@ -7,8 +7,11 @@
 OBJ::CObjNode::CObjNode() :
 	m_pParent(nullptr),
 	m_pAni(nullptr),
-	m_TMRoot(g_IDMATRIX)
-{}
+	m_TMRoot(g_IDMATRIX),
+	m_pTMSkin(nullptr)
+{
+}
+
 OBJ::CObjNode::~CObjNode()
 {
 	SAFE_DELETE(m_pAni);
@@ -51,6 +54,23 @@ void OBJ::CObjNode::__InitLocalHelper(CObjNode*node)
 	}
 }
 
+void OBJ::CObjNode::UpdateSkinTM()
+{	
+	if (m_pTMSkin)
+	{
+		D3DXMATRIX InvTM;
+		D3DXMatrixInverse(&InvTM, nullptr, &m_TMOrign);
+
+		*m_pTMSkin = InvTM * m_TMWorld;
+	}
+}
+void OBJ::CObjNode::SetSkin(D3DXMATRIX * slot)
+{
+	m_pTMSkin = slot;
+}
+
+
+
 
 std::string OBJ::CObjNode::GetNodeName() const
 {
@@ -86,7 +106,7 @@ void OBJ::CObjNode::SetRootTM(D3DXMATRIX TM)
 void OBJ::CObjNode::__DrawHelper(CObjNode*node, std::vector<STMaterial*>&mat)
 {
 	//set world Trasform Matrix
-	g_pDevice->SetTransform(D3DTS_WORLD, &node->m_TMWorld);
+	node->UpdateWorld();
 
 	//Draw
 	node->Draw(mat);
@@ -109,6 +129,12 @@ void OBJ::CObjNode::update()
 {
 	__updateHelper(this);
 }
+
+void OBJ::CObjNode::UpdateWorld()
+{
+	g_pDevice->SetTransform(D3DTS_WORLD, &m_TMWorld);
+}
+
 void OBJ::CObjNode::__updateHelper(CObjNode*node)
 {
 	if (node->m_pAni)
@@ -121,6 +147,8 @@ void OBJ::CObjNode::__updateHelper(CObjNode*node)
 		//compute real World Transform
 		node->m_TMWorld = node->m_TMLocal * node->GetParWorld();
 	}
+
+	node->UpdateSkinTM();
 
 	//Compute Children's World Transform
 	for (auto ptr : node->m_vecChildren)

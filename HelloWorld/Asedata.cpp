@@ -348,6 +348,10 @@ CASEData::~CASEData()
 	{
 		SAFE_DELETE(Iter);
 	}
+	for (auto Iter : m_vecSkinObj)
+	{
+		SAFE_DELETE(Iter);
+	}
 	for (auto Iter : m_vecHelpObj)
 	{
 		SAFE_DELETE(Iter);
@@ -428,7 +432,10 @@ void CASEData::ParseGemoObject()
 
 	GeoObj->Parse(m_plexer);
 
-	m_vecGemoObj.push_back(GeoObj);
+	if (GeoObj->m_Mesh.m_vecWeight.size())
+		m_vecSkinObj.push_back(GeoObj);
+	else
+		m_vecGemoObj.push_back(GeoObj);
 
 	//create inheritTable
 	m_InheritData.InsertData(GeoObj->m_strNodeParent, GeoObj->m_strNodeName);
@@ -479,106 +486,4 @@ bool CASEData::ParseMaterial()
 	}
 	return TRUE;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-//bool CASEParser::LoadBone(CMeshData *_MeshInfo)
-//{
-//	if (_MeshInfo->NumOfBone == 0)return FALSE;
-
-//	int _ID;
-//	_MeshInfo->ppBoneNameList = new char*[_MeshInfo->NumOfBone];
-
-//	FindBlockStart();
-//	while (FindTokenEX(TOKENR_BONE, TOKEND_BLOCK_END))
-//	{
-//		FindNextToken();
-//		_ID = StrToInt(g_strToken);
-//		FindBlockStart();
-//		while (FindTokenEX(TOKENR_BONE_NAME, TOKEND_BLOCK_END))
-//		{
-//			FindNextToken();
-//			//read bone name 
-//			_MeshInfo->ppBoneNameList[_ID] = new char[strlen(g_strToken) + 1];
-//			strcpy(_MeshInfo->ppBoneNameList[_ID], g_strToken);
-//		}
-//	}
-//	return TRUE;
-//}
-
-//bool CASEParser::LoadWeight(CMeshData *_MeshInfo)
-//{
-//	if (_MeshInfo->NumOfSkinWeight == 0)return FALSE;
-
-//	int _ID;
-//	_MeshInfo->pWeightList = new CMeshWeightData[_MeshInfo->NumOfSkinWeight];
-//	FindBlockStart();
-//	while (FindTokenEX(TOKENR_MESH_WEIGHT, TOKEND_BLOCK_END))
-//	{
-//		FindNextToken();
-//		_ID = StrToInt(g_strToken);
-//		FindBlockStart();
-
-//		while (FindTokenEX(TOKENR_BONE_BLENGING_WEIGHT, TOKEND_BLOCK_END))
-//		{
-//			STMeshBlendWeightData temp;
-//			//read bone ref 
-//			FindNextToken();
-//			temp.BoneID = StrToInt(g_strToken);
-
-//			//read  weight
-//			FindNextToken();
-//			temp.Weight = StrToFloat(g_strToken);
-
-//			_MeshInfo->pWeightList[_ID].vecMeshWeight.push_back(temp);
-//		}
-
-//		//중복 된 웨이트값 합치기_______________________________________________________________
-//		for (int i = 0; i < _MeshInfo->pWeightList[_ID].vecMeshWeight.size(); i++)
-//		{
-//			int tempID = _MeshInfo->pWeightList[_ID].vecMeshWeight[i].BoneID;
-
-//			for (int k = i + 1; k < _MeshInfo->pWeightList[_ID].vecMeshWeight.size();)
-//			{
-//				//중복 찾음_______________________________________________________
-//				if (tempID == _MeshInfo->pWeightList[_ID].vecMeshWeight[k].BoneID)
-//				{
-//					//중복된 웨이트값 합치기
-//					_MeshInfo->pWeightList[_ID].vecMeshWeight[i].Weight += _MeshInfo->pWeightList[_ID].vecMeshWeight[k].Weight;
-//					//중복된 데이타 제거
-//					_MeshInfo->pWeightList[_ID].vecMeshWeight.erase(_MeshInfo->pWeightList[_ID].vecMeshWeight.begin() + k);
-//					continue;
-//				}
-//				k++;
-//			}
-//		}
-//		//----------------------------------------------------------------------------------------
-
-//		//가중치가 높은 4 개 웨이트값을 저장
-//		if (_MeshInfo->pWeightList[_ID].vecMeshWeight.size() > 4)
-//		{
-//			//정열
-//			sort(_MeshInfo->pWeightList[_ID].vecMeshWeight.begin(),
-//				_MeshInfo->pWeightList[_ID].vecMeshWeight.end(), CompareWeight);
-//			_MeshInfo->pWeightList[_ID].vecMeshWeight.resize(4);
-//		}
-//	}
-//	return TRUE;
-//}
-
-
-
-
-
 

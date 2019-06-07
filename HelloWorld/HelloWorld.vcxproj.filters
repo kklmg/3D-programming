@@ -97,6 +97,9 @@
     <Filter Include="Camera">
       <UniqueIdentifier>{6cdbab79-c67a-4af8-a6f0-36f5a4ba9756}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Shader">
+      <UniqueIdentifier>{ed92664f-9029-4f09-8c65-f07c8e432fe1}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -309,5 +312,15 @@
     <Image Include="HelloWorld.ico">
       <Filter>Resource Files</Filter>
     </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ASEFile\Dragon2.ASE">
+      <Filter>Source Files</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="VertexShader.hlsl">
+      <Filter>Shader</Filter>
+    </FxCompile>
   </ItemGroup>
 </Project>

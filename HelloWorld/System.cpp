@@ -46,7 +46,7 @@ bool CSystem::Init(HINSTANCE hInstance, int nCmdShow)
 		return false;
 	}	
 	m_pGrapMng->m_refFps = m_pFpsMng;
-	m_pFpsMng->FixFps(60);
+	//m_pFpsMng->FixFps(60);
 
 	//Init Time Manager
 	if (!InitTimeMng())

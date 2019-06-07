@@ -7,14 +7,103 @@
 
 #include<time.h>
 
+
+//Bone Weight 
+//----------------------------------------------------------------------
+
+ASEData::_Weight::_Weight() :
+	wID(0xff),
+	fWeight(0)
+{
+}
+
+ASEData::_Weight::_Weight(WORD _id, float _wt) :
+	wID(_id), 
+	fWeight(_wt) 
+{
+}
+
+bool ASEData::CompareWeight(ASEData::_Weight& a, ASEData::_Weight& b)
+{
+	return a.fWeight > b.fWeight;
+}
+
+void ASEData::STWeight::Add(WORD id, float weight)
+{
+	//Combine duplicated weight value
+	for (int i = 0; i < vecWeight.size(); ++i)
+	{
+		if (vecWeight[i].wID == id)
+		{
+			vecWeight[i].fWeight += weight;
+			return;
+		}
+	}
+	vecWeight.push_back(ASEData::_Weight(id, weight));
+}
+
+void ASEData::STWeight::Clip()
+{
+	if (vecWeight.size() < 5)return;
+
+	std::sort(vecWeight.begin(),
+		vecWeight.end(), CompareWeight);
+
+	//clip 
+	vecWeight.resize(4);
+
+	//deliver remain
+	float remain = 1.0f;
+	for (int i = 0; i < 4; ++i) 
+	{
+		remain -= vecWeight[i].fWeight;
+	}
+
+	if (remain > 0) 
+	{
+		float average = remain / 4.0f;
+		for (int i = 0; i < 4; ++i)
+		{
+			vecWeight[i].fWeight += average;
+		}	
+	}
+}
+
+void ASEData::STWeight::Export(STVTX_PWBNT& vtx)
+{
+	int i;
+	DWORD b[4] = { 0,0,0,0 };
+
+	//get and Combine indicies value
+	for (i = 0; i < vecWeight.size(); ++i)
+	{
+		b[i] = vecWeight[i].wID;
+	}
+	vtx.BoneID =
+		(b[3]) | (b[2] << 8) | (b[1] << 16) | (b[0] << 24);
+
+
+	//get weight value
+	int slot = 2;
+	for (i = 1; i < vecWeight.size(); ++i,slot--)
+	{
+		vtx.Weight[slot] = vecWeight[i].fWeight;
+	}
+}
+
+
+
+
+
+//Mesh
+//----------------------------------------------------------------------
+
 ASEData::CMesh::CMesh() 
 	:
 	m_wNumVertex(0),
 	m_wNumFace(0),
 	m_wNumTexture(0),
 	m_wNumTextureFace(0),
-	m_wNumBone(0),
-	m_wNumSkinWeight(0),
 	m_dwFVF(0),
 	m_wPerVtxSize(0),
 	m_bNormal(false)
@@ -28,6 +117,8 @@ ASEData::CMesh::~CMesh()
 		SAFE_DELETE(ptr);
 	}
 }
+
+//-----------------------------parsing-----------------------------------//
 
 bool ASEData::CMesh::ParseAll(CMYLexer *lexer)
 {
@@ -50,8 +141,7 @@ bool ASEData::CMesh::ParseAll(CMYLexer *lexer)
 	Memo.insert(TOKEND_BLOCK_START);
 
 
-	double __b = clock();
-
+	WORD tempW;
 	while ((lexer->FindToken_UseTable_Until(TOKEND_BLOCK_END,Memo)))
 	{
 		switch (CMYLexer::s_CurToken_Dw)
@@ -60,21 +150,27 @@ bool ASEData::CMesh::ParseAll(CMYLexer *lexer)
 		case TOKENR_MESH_NUMFACES:		lexer->GetWORD(m_wNumFace); break;
 		case TOKENR_MESH_NUMTVERTEX:	lexer->GetWORD(m_wNumTexture); break;
 		case TOKENR_MESH_NUMTVFACES:	lexer->GetWORD(m_wNumTextureFace); break;
-		case TOKENR_MESH_NUMBONE:		lexer->GetWORD(m_wNumBone); break;
-		case TOKENR_MESH_NUMSKINWEIGHT: lexer->GetWORD(m_wNumSkinWeight); break;
 		case TOKENR_MESH_VERTEX_LIST:	ParseVertex(lexer); break;
 		case TOKENR_MESH_FACE_LIST:		ParseFace(lexer); break;
 		case TOKENR_MESH_TVERTLIST:		ParseTexture(lexer); break;
 		case TOKENR_MESH_TFACELIST:		ParseTextureFace(lexer); break;
 		case TOKENR_MESH_NORMALS:		ParseNormal(lexer); break;
-			//case TOKENR_BONE_LIST:			 LoadBone(_MeshInfo); break;
-			//case TOKENR_MESH_WVERTEXS:		 LoadWeight(_MeshInfo); break;
-		case TOKEND_BLOCK_START:		 lexer->SkipCurBlock(); break;
+		case TOKENR_BONE_LIST:			ParseBone(lexer); break;
+		case TOKENR_MESH_WVERTEXS:		ParseWeight(lexer); break;
+		case TOKEND_BLOCK_START:		lexer->SkipCurBlock(); break;
+		case TOKENR_MESH_NUMBONE:		
+		{
+			lexer->GetWORD(tempW);
+			m_vecBone.resize(tempW); 
+		}break;
+		case TOKENR_MESH_NUMSKINWEIGHT: 
+		{
+			lexer->GetWORD(tempW);
+			m_vecWeight.resize(tempW);
+		}break;
+		
 		}
 	}
-	double __e = clock();
-
-	double delta = __e - __b;
 
 
 	//check vertex type
@@ -92,6 +188,9 @@ bool ASEData::CMesh::ParseAll(CMYLexer *lexer)
 
 		case D3DFVF_XYZ | D3DFVF_TEX1:
 			m_wPerVtxSize = sizeof(STVTX_PT); break;
+
+		case D3DFVF_XYZB4 | D3DFVF_LASTBETA_UBYTE4 | D3DFVF_NORMAL | D3DFVF_TEX1:
+			m_wPerVtxSize = sizeof(STVTX_PWBNT); break;
 	}
 
 	return TRUE;
@@ -283,6 +382,75 @@ bool ASEData::CMesh::ParseNormal(CMYLexer *lexer)
 	return TRUE;
 }
 
+bool ASEData::CMesh::ParseBone(CMYLexer *lexer) 
+{
+	lexer->MovetoBlockStart();
+
+	WORD BoneID;
+	while (lexer->FindToken_Until(TOKENR_BONE, TOKEND_BLOCK_END))
+	{
+		//Parse Bone ID
+		lexer->GetWORD(BoneID);
+
+		lexer->MovetoBlockStart();
+
+		if (lexer->FindToken_Until(TOKENR_BONE_NAME, TOKEND_BLOCK_END))
+		{
+			lexer->GetString(m_vecBone[BoneID]);
+			lexer->MovetoBlockEnd();
+		}
+	}
+	return true;
+}
+
+bool ASEData::CMesh::ParseWeight(CMYLexer *lexer) 
+{
+	lexer->MovetoBlockStart();
+
+	WORD BoneID, WeightID;
+	float fWeight;
+	while (lexer->FindToken_Until(TOKENR_MESH_WEIGHT, TOKEND_BLOCK_END))
+	{
+		//Parse Bone ID
+		lexer->GetWORD(WeightID);
+
+		lexer->MovetoBlockStart();
+
+		while (lexer->FindToken_Until(TOKENR_BONE_BLENGING_WEIGHT, TOKEND_BLOCK_END))
+		{
+			lexer->GetWORD(BoneID);
+			lexer->GetFloat(fWeight);
+
+			m_vecWeight[WeightID].Add(BoneID, fWeight);
+		}
+		m_vecWeight[WeightID].Clip();
+	}
+	return true;
+}
+
+DWORD ASEData::CMesh::CheckFormat()
+{
+	DWORD FVF = 0;
+	if (m_wNumVertex)
+	{
+		if (m_vecWeight.size())
+		{
+			FVF |= D3DFVF_XYZB4 | D3DFVF_LASTBETA_UBYTE4;
+		}
+		else
+			FVF |= D3DFVF_XYZ;
+	}
+
+	if (m_wNumTexture)
+		FVF |= D3DFVF_TEX1;
+	if (m_bNormal)
+		FVF |= D3DFVF_NORMAL;
+
+
+	return FVF;
+}
+
+//-----------------------------Create-----------------------------------//
 bool ASEData::CMesh::RecieveVTX_INDEX
 (void **Getvtx, WORD &vtxcount, WORD **Indicies, const D3DXMATRIX *Transform)
 {
@@ -299,6 +467,11 @@ bool ASEData::CMesh::RecieveVTX_INDEX
 
 	case D3DFVF_XYZ | D3DFVF_TEX1:
 		return 	CreateVI_PT(Getvtx, vtxcount, Indicies, Transform); break;
+
+	case D3DFVF_XYZB4 | D3DFVF_LASTBETA_UBYTE4 | D3DFVF_NORMAL | D3DFVF_TEX1:
+		return 	CreateVI_PWBNT(Getvtx, vtxcount, Indicies, Transform); break;
+
+
 	case 0:return false; break;
 
 	}
@@ -552,21 +725,83 @@ bool ASEData::CMesh::CreateVI_PT(void **Getvtx, WORD &vtxcount, WORD **Indicies,
 	delete[]dplChecker;
 	return true;
 }
-
-
-
-DWORD ASEData::CMesh::CheckFormat()
+bool ASEData::CMesh::CreateVI_PWBNT(void **Getvtx, WORD &vtxcount, WORD **Indicies, const D3DXMATRIX *Transform)
 {
-	DWORD FVF = 0;
-	if (m_wNumVertex)
-		FVF |= D3DFVF_XYZ;
-	if (m_wNumTexture)
-		FVF |= D3DFVF_TEX1;
-	if (m_bNormal)
-		FVF |= D3DFVF_NORMAL;
+	//duplicate checker
+	std::map<STVtxData, WORD, CompNT>*dplChecker
+		= new std::map<STVtxData, WORD, CompNT>[m_vecVertex.size()];
+
+	//Init vertex Atrray
+	*Getvtx = new STVTX_PWBNT[m_vecFace.size() * 3];
+	STVTX_PWBNT *CurVTXSlot = (STVTX_PWBNT*)*Getvtx;
+
+	//Init Index Array
+	*Indicies = new WORD[m_vecFace.size() * 3];
+	WORD *CurIDSlot = *Indicies;
+	WORD MAXID = 0;
+
+	//Decompose Face
+	STVtxData vtxData[3];
+	int i;
+
+	int curid = 0;
+	//for each face
+	for (auto face : m_vecFace)
+	{
+		//decompose face to three point
+		face->Decompose(vtxData);
+
+		//for each vertex
+		for (i = 0; i < 3; ++i)
+		{
+			//find if the vertex has already exist
+			auto iter = dplChecker[vtxData[i].wPos].find(vtxData[i]);
+
+			//case: not found
+			if (iter == dplChecker[vtxData[i].wPos].end())
+			{
+				dplChecker[vtxData[i].wPos].insert(std::make_pair(vtxData[i], MAXID));
+
+				//fill vertex slot
+				//-----------------------------------------------------
+
+				//get position
+				D3DXVec3TransformCoord(&CurVTXSlot->Pos,
+					&m_vecVertex[vtxData[i].wPos], Transform);
+
+				//get normal
+				D3DXVECTOR3 normal = vtxData[i].f3Normal.vt3();
+				D3DXVec3TransformNormal(&CurVTXSlot->Normal, &normal, Transform);
+
+				//get texture
+				CurVTXSlot->Tex = m_vecTex[vtxData[i].wTex];
+
+				//get bone & weight
+				m_vecWeight[vtxData[i].wPos].Export(*CurVTXSlot);
+
+				//next slot
+				++CurVTXSlot;
+				++vtxcount;
+
+				//fill index slot	
+				*CurIDSlot = MAXID;
+				++MAXID;
+			}
+
+			//case:found
+			else
+			{
+				//fill index slot
+				*CurIDSlot = iter->second;
+			}
+			++CurIDSlot;
+		}
 
 
-	return FVF;
+	}
+
+	delete[]dplChecker;
+	return true;
 }
 
 
@@ -587,7 +822,10 @@ OBJ::CMesh* ASEData::CMesh::CreateMesh(const D3DXMATRIX *Transform)
 	std::vector<OBJ::STFaceMat>& MeshFacies = newmesh->GetFaceMatVec();
 
 	//set vertex
-	newmesh->InitVBuffer(m_dwFVF, vtxcount, m_wPerVtxSize, Vertexies);
+	if (m_vecWeight.size())
+		newmesh->InitVBuffer(m_dwFVF, vtxcount, m_wPerVtxSize, Vertexies, true);
+	else
+		newmesh->InitVBuffer(m_dwFVF, vtxcount, m_wPerVtxSize, Vertexies, false);
 
 	//set Face
 	WORD facecount = m_vecFace.size();
@@ -606,9 +844,3 @@ OBJ::CMesh* ASEData::CMesh::CreateMesh(const D3DXMATRIX *Transform)
 
 	return newmesh;
 }
-
-
-
-
-
-

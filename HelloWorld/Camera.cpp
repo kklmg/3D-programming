@@ -2,9 +2,9 @@
 #include"Camera.h"
 
 CCamera::CCamera() :
-	m_vt3Pos(0, 500, 0),
-	m_vt3Up(1, 0, 0),
-	m_vt3Right(0, 0, 1),
+	m_vt3Pos(0, 400, -100),
+	m_vt3Up(0, 0, 1),
+	m_vt3Right(0, 1, 0),
 	m_vt3Look(0, -1, 0)
 {
 }
@@ -22,10 +22,10 @@ void CCamera::Update()
 void CCamera::__Input()
 {
 	if (::GetAsyncKeyState('W') & 0x8000f)
-		Walk(1.0f);
+		Walk(4.0f);
 
 	if (::GetAsyncKeyState('S') & 0x8000f)
-		Walk(-1.0f);
+		Walk(-4.0f);
 
 	if (::GetAsyncKeyState('A') & 0x8000f)
 		Strafe(-1.0f);

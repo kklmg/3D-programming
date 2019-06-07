@@ -98,6 +98,9 @@ void ASEData::CAniData::Parse(CMYLexer *lexer)
 
 OBJ::CAniTrack*  ASEData::CAniData::CreateAni(STScene* Data)
 {
+
+	if ((!m_listPos.size()) && (!m_listRot.size()) && (!m_listScale.size())) return nullptr;
+
 	OBJ::CAniTrack *NewAni = new OBJ::CAniTrack();
 
 

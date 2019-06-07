@@ -58,7 +58,8 @@ bool CObject::Init(ASEData::CASEData& asedata, std::string &dir)
 	asedata.CreateD3DMat(m_vecMat, dir.data());
 
 	OBJ::CObjNode* newObj;
-	
+	OBJ::CSkinObj* SkinObj;
+
 	//Create Geom object
 	//----------------------------------------------------------	
 	for (auto ptr : asedata.m_vecGemoObj)
@@ -118,6 +119,34 @@ bool CObject::Init(ASEData::CASEData& asedata, std::string &dir)
 		m_mapObjs[newObj->GetNodeName()] = newObj;
 	}
 	
+	//Create Skin Obj
+	for (auto skinptr : asedata.m_vecSkinObj)
+	{
+		//create mesh
+		SkinObj = skinptr->CreateSkinObj();
+
+		//create animation
+		SkinObj->SetAni(skinptr->CreateAni(asedata.GetSceneData()));
+
+		//set root
+		if (asedata.m_InheritData.IsRoot(SkinObj->GetNodeName()))
+		{
+			m_vecRoot.push_back(SkinObj);
+		}
+
+		//insert data
+		m_mapObjs[SkinObj->GetNodeName()] = SkinObj;
+
+		//set skin
+		for (auto Iter : m_mapObjs)
+		{
+			Iter.second->SetSkin(SkinObj->GetSlot(Iter.first));
+		}
+	}
+
+	
+
+
 
 
 

@@ -38,6 +38,11 @@ bool CDirect3D::Init()
 	else
 		vp = D3DCREATE_SOFTWARE_VERTEXPROCESSING;
 
+	
+	//i'm not sure if HARDWARE_VERTEXPROCESSING can supply vertex blending
+	vp = D3DCREATE_SOFTWARE_VERTEXPROCESSING;
+
+
 	// Step 3: Fill out the D3DPRESENT_PARAMETERS structure.
 
 	D3DPRESENT_PARAMETERS d3dpp;
