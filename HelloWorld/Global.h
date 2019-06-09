@@ -55,3 +55,10 @@ extern CTimeMng *g_pTimeMng;									//Time Manager
 
 //Identity matrix
 extern const D3DXMATRIX g_IDMATRIX;
+
+//Global Function
+//-------------------------------------------------------------
+
+void ComputeNormal(D3DXVECTOR3 *out, D3DXVECTOR3 *v1, D3DXVECTOR3 *v2, D3DXVECTOR3 *v3);
+
+D3DMATERIAL9 InitMtrl(D3DXCOLOR a, D3DXCOLOR d, D3DXCOLOR s, D3DXCOLOR e, float p);

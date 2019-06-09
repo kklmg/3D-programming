@@ -47,3 +47,27 @@ const D3DXMATRIX g_IDMATRIX =
 	/*_31, _32, _33, _34*/ 0,0,1,0,
 	/*_41, _42, _43, _44*/ 0,0,0,1,
 };
+
+
+//Global Function
+
+void ComputeNormal(D3DXVECTOR3 *out, D3DXVECTOR3 *v1, D3DXVECTOR3 *v2, D3DXVECTOR3 *v3)
+{
+	D3DXVECTOR3 u = *v2 - *v1;
+	D3DXVECTOR3 v = *v3 - *v1;
+
+	D3DXVec3Cross(out, &u, &v);
+	D3DXVec3Normalize(out, out);
+}
+
+D3DMATERIAL9 InitMtrl(D3DXCOLOR a, D3DXCOLOR d, D3DXCOLOR s, D3DXCOLOR e, float p)
+{
+	D3DMATERIAL9 mtrl;
+	mtrl.Ambient = a;
+	mtrl.Diffuse = d;
+	mtrl.Specular = s;
+	mtrl.Emissive = e;
+	mtrl.Power = p;
+
+	return mtrl;
+}

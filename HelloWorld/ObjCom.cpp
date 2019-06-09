@@ -22,7 +22,6 @@ OBJ::STMaterial::~STMaterial()
 }
 
 
-
 OBJ::CMesh::CMesh() :
 	m_dwFVF(0),
 	m_dwVTXSize(0),

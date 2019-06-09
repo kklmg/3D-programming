@@ -1,8 +1,6 @@
 #include"stdafx.h"
 #include"Global.h"
 #include"Timer.h"
-#include"ObjCom.h"
-#include"Asedata.h"
 #include"Object.h"
 
 
@@ -187,7 +185,7 @@ bool CObject::Init(ASEData::CASEData& asedata, std::string &dir)
 	return true;
 }
 
-void CObject::SetTransform(D3DXMATRIX* TM) 
+void CObject::SetTransform(const D3DXMATRIX* TM) 
 {
 	if (TM)
 	{

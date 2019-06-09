@@ -4,7 +4,6 @@
 #include"ObjCom.h"
 #include"Asedata.h"
 #include"MyMath.h"
-
 #include<time.h>
 
 

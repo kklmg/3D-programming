@@ -16,6 +16,8 @@ public:
 	IDirect3DDevice9*  GetDevice()const;
 
 private:
+	void __InitRenderState();
+
 	IDirect3DDevice9* m_pDevice;
 	
 };

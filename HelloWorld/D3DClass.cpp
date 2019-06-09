@@ -95,6 +95,9 @@ bool CDirect3D::Init()
 	d3d9->Release(); // done with d3d9 object
 
 	g_pDevice = m_pDevice;
+
+	__InitRenderState();
+
 	return true;
 }
 
@@ -104,6 +107,7 @@ void CDirect3D::BeginScene()
 	m_pDevice->Clear(0, 0, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER, g_BACKCOLOR, 1.0f, 0);
 	m_pDevice->BeginScene();
 }
+
 void CDirect3D::EndScene() 
 {
 	m_pDevice->EndScene();
@@ -121,4 +125,53 @@ void CDirect3D::SetViewTM(D3DXMATRIX* V)
 	m_pDevice->SetTransform(D3DTS_VIEW, V);
 }
 
+void CDirect3D::__InitRenderState() 
+{
+	D3DLIGHT9 d3dLight;
+	D3DXVECTOR3 dir(0.0f, -1.0f, -0.25f);
 
+
+	//-----------------------------------------------------------------------------
+	//Set Light
+	//-----------------------------------------------------------------------------
+	d3dLight.Type = D3DLIGHT_DIRECTIONAL;
+	d3dLight.Ambient = D3DXCOLOR(D3DCOLOR_XRGB(255, 255, 255)) * 0.6f;
+	d3dLight.Diffuse = D3DXCOLOR(D3DCOLOR_XRGB(255, 255, 255));
+	d3dLight.Specular = D3DXCOLOR(D3DCOLOR_XRGB(255, 255, 255)) * 0.6f;
+	d3dLight.Direction = dir;
+
+	m_pDevice->SetLight(0, &d3dLight);
+
+	//-----------------------------------------------------------------------------
+	// Set the projection matrix.
+	//-----------------------------------------------------------------------------
+
+	D3DXMATRIX proj;
+	D3DXMatrixPerspectiveFovLH(
+		&proj,
+		D3DX_PI * 0.5f, // 90 - degree
+		(float)g_WD_WIDTH / (float)g_WD_HEIGHT,
+		1.0f,
+		1000.f);
+	m_pDevice->SetTransform(D3DTS_PROJECTION, &proj);
+
+	//-----------------------------------------------------------------------------
+	// Set Render State
+	//-----------------------------------------------------------------------------
+	//m_rpDevice->SetRenderState(D3DRS_FILLMODE, D3DFILL_WIREFRAME);
+	//m_rpDevice->SetRenderState(D3DRS_NORMALIZENORMALS, true);
+	m_pDevice->LightEnable(0, true);
+	m_pDevice->SetRenderState(D3DRS_LIGHTING, true);
+	m_pDevice->SetRenderState(D3DRS_SPECULARENABLE, false);
+	m_pDevice->SetRenderState(D3DRS_FILLMODE, _D3DFILLMODE::D3DFILL_SOLID);
+	//m_rpDevice->SetRenderState(D3DRS_FILLMODE, _D3DFILLMODE::D3DFILL_WIREFRAME);
+	//m_rpDevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);
+	//m_rpDevice->SetRenderState(D3DRS_ZENABLE, TRUE);
+	//m_rpDevice->SetRenderState(D3DRS_CULLMODE, _D3DCULL::D3DCULL_CW);
+	D3DMATERIAL9 defaultmat = InitMtrl(g_WHITE, g_WHITE, g_BLACK, g_BLACK, 10);
+	m_pDevice->SetMaterial(&defaultmat);
+
+
+
+
+}

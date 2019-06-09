@@ -1,11 +1,5 @@
-﻿  ObjCom.cpp
-c:\users\liming\documents\visual studio 2015\projects\helloworld\helloworld\objcom.cpp(78): warning C4800: 'HRESULT': forcing value to bool 'true' or 'false' (performance warning)
-c:\users\liming\documents\visual studio 2015\projects\helloworld\helloworld\objcom.cpp(93): warning C4800: 'HRESULT': forcing value to bool 'true' or 'false' (performance warning)
-c:\users\liming\documents\visual studio 2015\projects\helloworld\helloworld\objcom.cpp(166): warning C4018: '<': signed/unsigned mismatch
-c:\users\liming\documents\visual studio 2015\projects\helloworld\helloworld\objcom.cpp(184): warning C4800: 'HRESULT': forcing value to bool 'true' or 'false' (performance warning)
-c:\users\liming\documents\visual studio 2015\projects\helloworld\helloworld\objcom.cpp(248): warning C4018: '<': signed/unsigned mismatch
-c:\users\liming\documents\visual studio 2015\projects\helloworld\helloworld\objcom.cpp(261): warning C4018: '<': signed/unsigned mismatch
-c:\users\liming\documents\visual studio 2015\projects\helloworld\helloworld\objcom.cpp(270): warning C4018: '<': signed/unsigned mismatch
-c:\users\liming\documents\visual studio 2015\projects\helloworld\helloworld\objcom.cpp(301): warning C4244: '=': conversion from 'DWORD' to 'WORD', possible loss of data
+﻿  ObjectMng.cpp
+c:\users\liming\documents\visual studio 2015\projects\helloworld\helloworld\trie.h(113): warning C4812: obsolete declaration style: please use 'STrie::Trie_Table<Value>::Trie_Table' instead
+c:\users\liming\documents\visual studio 2015\projects\helloworld\helloworld\trie.h(126): warning C4812: obsolete declaration style: please use 'STrie::Trie_Table<Value>::~Trie_Table' instead
   HelloWorld.vcxproj -> C:\Users\LiMing\Documents\Visual Studio 2015\Projects\HelloWorld\Debug\HelloWorld.exe
   HelloWorld.vcxproj -> C:\Users\LiMing\Documents\Visual Studio 2015\Projects\HelloWorld\Debug\HelloWorld.pdb (Full PDB)

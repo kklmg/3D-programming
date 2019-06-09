@@ -1,5 +1,6 @@
 #pragma once
-
+#include"ObjCom.h"
+#include"Asedata.h"
 class CObject
 {
 public:
@@ -13,7 +14,7 @@ public:
 
 	bool Draw();
 	
-	void SetTransform(D3DXMATRIX* TM);
+	void SetTransform(const D3DXMATRIX* TM);
 
 private:
 
@@ -27,5 +28,5 @@ private:
 
 	std::vector<OBJ::CObjNode*>m_vecRoot;
 
-	friend class OBJ::CObjNode;
+	//friend class OBJ::CObjNode;
 };
